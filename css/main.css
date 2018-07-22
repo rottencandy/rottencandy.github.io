@@ -8,7 +8,7 @@ body {
 
 header {
   box-sizing: border-box;
-  background: linear-gradient(-90deg, #73cc76, #5ca35e);
+  background: linear-gradient(-90deg, #73cc76, #5cb55f);
 }
 
 header .title-slants .slant{
@@ -18,7 +18,7 @@ header .title-slants .slant{
 }
 header .title-slants .slant:nth-child(1) {
   border-width: 100px 100vmax 0 0;
-  border-color: #5ca35e transparent transparent transparent;
+  border-color: #5cb55f transparent transparent transparent;
 }
 header .title-slants .slant:nth-child(2) {
   border-width: 0 0 100px 100vmax;
@@ -33,7 +33,7 @@ header .title-slants .slant:nth-child(3) {
   color: white;
   position: absolute;
   top: 9em;
-  padding-left: 5em;
+  padding-left: 5vmax;
 }
 .header-text h1 {
   font-size: 42pt;
@@ -43,16 +43,24 @@ header .title-slants .slant:nth-child(3) {
   font-size: 16pt;
   font-weight: 100;
 }
+@media(max-width: 415px) {
+  .header-text {
+    top: 6em;
+    padding-left: 2vmax;
+  }
+  .header-text h1 {
+    font-size: 32pt;
+  }
+}
 
 section {
   margin: 7em 0 5em 0;
+  text-align: center;
 }
 section h3 {
   display: inline-block;
   padding-bottom: 5px;
   position: relative;
-  margin-left: 52.5%;
-  transform: translate(-50%);
   text-align: center;
 }
 section h3::before {
@@ -87,11 +95,15 @@ li a {
   font-size: 1.2em;
   padding: 1em;
 }
+@media(max-width: 415px) {
+  li {display: block;}
+  ul {text-align: justify;}
+}
 a.resume-button {
   display:inline-block;
   padding:0.35em 1.2em;
   border:0.1em solid green;
-  margin: 1em 0.3em 0.3em 46%;
+  margin: 1em 0 0.3em 0;
   border-radius:0.12em;
   box-sizing: border-box;
   text-decoration:none;
@@ -104,10 +116,9 @@ a.resume-button:hover {
   color: white;
   background-color: green;
 }
-/*
 @media all and (max-width:30em){
   a.resume-button{
     display:block;
     margin:0.4em auto;
  }
-}*/
+}

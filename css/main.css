@@ -93,7 +93,7 @@ li a {
   color: #86888a;
   text-decoration: none;
   font-size: 1.2em;
-  padding: 1em;
+  margin: 1em;
 }
 @media(max-width: 415px) {
   li {display: block;}

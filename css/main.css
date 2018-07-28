@@ -1,4 +1,4 @@
-body {
+html, body {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
@@ -117,8 +117,8 @@ a.resume-button:hover {
   background-color: green;
 }
 @media all and (max-width:30em){
-  a.resume-button{
-    display:block;
-    margin:0.4em auto;
- }
+  a.resume-button{
+    display:block;
+    margin:0.4em auto;
+ }
 }

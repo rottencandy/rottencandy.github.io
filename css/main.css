@@ -73,6 +73,20 @@ section h3::before {
   border-bottom: 1px solid #018786;
 }
 
+div.card {
+    max-width: 70%;
+    margin: auto;
+}
+div.card p {
+    text-align: left;
+    padding: 0 2em 0 2em;
+}
+div.card ul {padding-left: 5em;text-align: left}
+a.link {
+    color: green;
+    text-decoration: underline;
+}
+
 .icon-github:hover {color: #333;text-decoration: none;}
 .icon-linkedin:hover {color: #0077b5;text-decoration: none;}
 .icon-twitter:hover {color: #1da1f2;text-decoration: none;}
@@ -84,20 +98,20 @@ p.skills, p.frameworks {
   font-size: 1.2em;
 }
 
-ul {
+section.contact ul {
   padding-top: 1em;
   text-align: center;
 }
-li {display: inline;}
-li a {
+section.contact li {display: inline;}
+section.contact li a {
   color: #86888a;
   text-decoration: none;
   font-size: 1.2em;
   margin: 1em;
 }
 @media(max-width: 415px) {
-  li {display: block;}
-  ul {text-align: justify;}
+  section.contact li {display: block;}
+  section.contact ul {text-align: justify;}
 }
 a.resume-button {
   display:inline-block;

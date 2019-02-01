@@ -18,15 +18,15 @@ header .title-slants .slant{
 }
 header .title-slants .slant:nth-child(1) {
   border-width: 100px 100vmax 0 0;
-  border-color: #5cb55f transparent transparent transparent;
+  border-color: #73cc76 transparent transparent transparent;
 }
 header .title-slants .slant:nth-child(2) {
   border-width: 0 0 100px 100vmax;
-  border-color: transparent transparent #73cc76 transparent;
+  border-color: transparent transparent #5cb55f transparent;
 }
 header .title-slants .slant:nth-child(3) {
   border-width: 100px 100vmax 0 0;
-  border-color: #73cc76 #fff transparent transparent;
+  border-color: #5cb55f #fff transparent transparent;
 }
 
 .header-text {
@@ -74,8 +74,9 @@ section h3::before {
 }
 
 div.card {
-    max-width: 70%;
+    max-width: 55%;
     margin: auto;
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
 }
 div.card p {
     text-align: left;

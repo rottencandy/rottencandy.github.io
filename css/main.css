@@ -1,6 +1,5 @@
 body {
-  width: 100%;
-  height: 100%;
+  margin: 0;
   font-family: 'Raleway', sans-serif;
   background: #fff;
 }
@@ -61,7 +60,6 @@ section h3 {
   display: inline-block;
   padding-bottom: 5px;
   position: relative;
-  text-align: center;
 }
 section h3::before {
   content: "";
@@ -74,34 +72,34 @@ section h3::before {
 }
 
 div.card {
-    max-width: 45em;
-    margin: auto;
-    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+  max-width: 45em;
+  margin: auto;
+  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
 }
 div.card p {
-    text-align: left;
-    padding: 0 2em 0 2em;
+  text-align: left;
+  padding: 0 2em 0 2em;
 }
 div.card ul {padding-left: 5em;text-align: left}
-a.link {
-    color: green;
-    text-decoration: underline;
+a {
+  color: green;
+  text-decoration: underline;
+}
+
+section.about p, section.skills p {
+  padding-top: 1em;
+  font-size: 1.2em;
+  max-width: 80%;
+  margin: 0 auto 0 auto;
 }
 
 .icon-github:hover {color: #333;text-decoration: none;}
 .icon-linkedin:hover {color: #0077b5;text-decoration: none;}
 .icon-twitter:hover {color: #1da1f2;text-decoration: none;}
-.icon-mail:hover {text-decoration: none;}
-
-p.skills, p.frameworks {
-  padding-top: 1em;
-  text-align: center;
-  font-size: 1.2em;
-}
+.icon-mail:hover {color: #343434; text-decoration: none;}
 
 section.contact ul {
   padding-top: 1em;
-  text-align: center;
 }
 section.contact li {display: inline;}
 section.contact li a {
@@ -124,15 +122,14 @@ a.resume-button {
   text-decoration:none;
   font-weight:300;
   color: green;
-  text-align:center;
   transition: all 0.2s;
 }
 a.resume-button:hover {
   color: white;
   background-color: green;
 }
-@media all and (max-width:30em){
-  a.resume-button{
+@media all and (max-width:30em) {
+  a.resume-button {
     display:block;
     margin:0.4em auto;
     max-width: 6em;

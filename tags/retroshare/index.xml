@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Mohammed Saud</title>
-    <link>https://saud.gq/</link>
-    <description>Recent content on Mohammed Saud</description>
+    <title>Retroshare on Mohammed Saud</title>
+    <link>https://saud.gq/tags/retroshare/</link>
+    <description>Recent content in Retroshare on Mohammed Saud</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 23 May 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://saud.gq/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://saud.gq/tags/retroshare/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,16 +19,6 @@
       <guid>https://saud.gq/posts/2019/05/a-new-web-interface-for-retroshare/</guid>
       <description>This is a mirror of a post I wrote on the Freifunk blog.
  The Retroshare communication platform already has a preliminary web interface. But it is severely limited, supports only the basic of interactions with the client, and does not have the nice design and beautiful visual interface that the modern web platform makes possible. This GSoC project will be about creating an entirely new web interface for Retroshare using it’s JSON API to handle all communication between the WebUI and the client.</description>
-    </item>
-    
-    <item>
-      <title>About me</title>
-      <link>https://saud.gq/about/</link>
-      <pubDate>Wed, 09 Apr 2014 00:00:00 +0000</pubDate>
-      
-      <guid>https://saud.gq/about/</guid>
-      <description>Here you can find stuff about me that I will hopefully fill in the future when the time is right.
-Until then, enjoy the rest of the site.</description>
     </item>
     
   </channel>

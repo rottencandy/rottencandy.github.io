@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
@@ -10,37 +10,31 @@
   <url>
     <loc>https://saud.gq/tags/gsoc/</loc>
     <lastmod>2019-05-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://saud.gq/tags/mithril/</loc>
     <lastmod>2019-05-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://saud.gq/</loc>
     <lastmod>2019-05-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://saud.gq/posts/</loc>
     <lastmod>2019-05-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://saud.gq/tags/retroshare/</loc>
     <lastmod>2019-05-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://saud.gq/tags/</loc>
     <lastmod>2019-05-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -50,7 +44,6 @@
   
   <url>
     <loc>https://saud.gq/categories/</loc>
-    <priority>0</priority>
   </url>
   
 </urlset>

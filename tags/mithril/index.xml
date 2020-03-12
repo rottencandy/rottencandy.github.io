@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Mithril on Mohammed Saud</title>
@@ -6,10 +6,21 @@
     <description>Recent content in Mithril on Mohammed Saud</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 May 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 23 Jun 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://saud.gq/tags/mithril/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Web Interface for Retroshare - Update 1</title>
+      <link>https://saud.gq/posts/2019/06/web-interface-for-retroshare-update-1/</link>
+      <pubDate>Sun, 23 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://saud.gq/posts/2019/06/web-interface-for-retroshare-update-1/</guid>
+      <description>This is a mirror of a post I wrote on the Freifunk blog.
+ Since the first post, there has been quite a lot of progress on development of the new Web Interface for Retroshare.
+As the build process is not using any JavaScript-specific tools, I spent a lot of time making sure that the development process was made as streamlined as possible. All the components are logically isolated and functionality moved to their relevant places.</description>
+    </item>
     
     <item>
       <title>A new Web Interface for Retroshare</title>

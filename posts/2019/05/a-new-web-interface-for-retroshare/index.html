@@ -26,7 +26,8 @@
 
 
 
-<link rel="stylesheet" href="/main.min.0d47b4686e972122bd29f0c1e3dd024a2d541cd8b1b543622520822ea6f4238a.css">
+<link rel="stylesheet" href="/main.min.2f0d18b84270567c723bff340b09ab08db3a7634237cd9667d052eb6b14669b8.css">
+
 
 
 
@@ -34,14 +35,16 @@
 <meta itemprop="name" content="A new Web Interface for Retroshare">
 <meta itemprop="description" content="This is a mirror of a post I wrote on the Freifunk blog.
  The Retroshare communication platform already has a preliminary web interface. But it is severely limited, supports only the basic of interactions with the client, and does not have the nice design and beautiful visual interface that the modern web platform makes possible. This GSoC project will be about creating an entirely new web interface for Retroshare using it’s JSON API to handle all communication between the WebUI and the client.">
+
+
 <meta itemprop="datePublished" content="2019-05-23T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-05-23T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="534">
-<meta itemprop="image" content="https://saud.gq"/>
 
 
 
-<meta itemprop="keywords" content="GSOC,Retroshare,Mithril," /><meta name="twitter:card" content="summary_large_image"/>
+<meta itemprop="keywords" content="GSOC,Retroshare,Mithril," />
+<meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://saud.gq"/>
 
 <meta name="twitter:title" content="A new Web Interface for Retroshare"/>
@@ -128,32 +131,48 @@
             
 
             <div class="post-content">
-                <blockquote>
+                
+
+<blockquote>
 <p>This is a mirror of a <a href="https://blog.freifunk.net/2019/05/23/a-new-web-interface-for-retroshare">post</a> I wrote on the <a href="https://blog.freifunk.net">Freifunk blog</a>.</p>
 </blockquote>
+
 <p>The Retroshare communication platform already has a preliminary web interface.
 But it is severely limited, supports only the basic of interactions with the client, and does not have the nice design and beautiful visual interface that the modern web platform makes possible.
 This GSoC project will be about creating an entirely new web interface for Retroshare using it’s JSON API to handle all communication between the WebUI and the client.</p>
+
 <h2 id="about-me">About Me</h2>
+
 <p>My name is Saud, I’m a third-year undergraduate student in Computer Science at Alliance University, Bangalore, India. This is my first time participating as a student in GSoC as well as my first time being involved in the Freifunk community.</p>
+
 <h2 id="project-breifing">Project breifing</h2>
+
 <p>The Web Interface is planned to be made in such a way that all communication with the client happens through the JSON API. As such, It will be made using JavaScript.</p>
+
 <p>The <a href="https://mithril.js.org">Mithril</a> web framework has been chosen chosen for designing the front-end as well as handling the API calls.
 Mithril is a very lightweight and fast client-side framework and is especially used for building single-page applications.
 It also provides neatly integrated and customizable XHR capabilities out of the box.</p>
+
 <p>The old Web UI communicates with the client app entirely through the deprecated libresapi.
 The new UI will instead be using the JSON API for communication.
 The JSON API has already been implemented using <a href="https://rapidjson.org">Rapidjson</a>.
 This makes it relatively easier to add new API headers to extend the interface and support more functionality.</p>
+
 <p>Apart from this, one more important thing to keep in mind is that the WebUI is planned to replace the old interface and hopefully be shipped along with the main Retroshare app.
 And so it would make sense to keep dependencies to a minimum.
 This app will have a development process different from typical modern web dev practices.
 This app will not have dependencies(such as Nodejs), making it lightweight and able to easily integrate into the parent app’s build process.</p>
+
 <p>A minimal working example has been implemented and can be seen in the source page.</p>
+
 <p>Project source: <a href="https://github.com/RetroShare/RSNewWebUI">https://github.com/RetroShare/RSNewWebUI</a></p>
+
 <p>My fork: <a href="https://github.com/rottencandy/RSNewWebUI">https://github.com/rottencandy/RSNewWebUI</a></p>
+
 <h2 id="overview">Overview</h2>
+
 <p>A brief overview of the main goals to be expected from the project:</p>
+
 <ul>
 <li>A “tab” system to display different sections of the Retroshare interface.</li>
 <li>Detailed and asynchronously updating tabs about file transfers, downloads, adding peers, internal statistics, etc.</li>
@@ -162,9 +181,11 @@ This app will not have dependencies(such as Nodejs), making it lightweight and a
 <li>Styled UI using CSS for a more sleek and beautiful look that adds to the visual appeal.</li>
 <li>Replace the old WebUI and disable libresapi on merge.</li>
 </ul>
+
 <p>The web interface would be extremely beneficial to the community, allowing Retroshare to leverage the flexibility and approachability of the web.
 It could be used by people who desire an alternate interface to Retroshare, for example, when using the nogui version,
 or due to the traditional GUI client being too demanding on low spec hardware, or due to the OS having problems with Qt, etc.</p>
+
 <p>Looking forward to an exciting summer working on this project. I will post more updates soon.</p>
 
             </div>
@@ -182,6 +203,26 @@ or due to the traditional GUI client being too demanding on low spec hardware, o
             <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2019-05-23</p>
         </div>
 
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h">Read other posts</span>
+                    <hr />
+                </div>
+
+                <div class="pagination__buttons">
+                    
+                        <span class="button previous">
+                            <a href="https://saud.gq/posts/2019/06/web-interface-for-retroshare-update-1/">
+                                <span class="button__icon">←</span>
+                                <span class="button__text">Web Interface for Retroshare - Update 1</span>
+                            </a>
+                        </span>
+                    
+
+                    
+                </div>
+            </div>
         
 
         
@@ -212,7 +253,7 @@ or due to the traditional GUI client being too demanding on low spec hardware, o
 
 
 
-<script type="text/javascript" src="/bundle.min.2d5469329143160ae2456a69c3c76dc2d0a3b212b46afe291a51bd68650ed6f8697e001dab54f1c272c77ce08092a8c55e5bb4314e0ee334aab4b927ec896638.js" integrity="sha512-LVRpMpFDFgriRWppw8dtwtCjshK0av4pGlG9aGUO1vhpfgAdq1TxwnLHfOCAkqjFXlu0MU4O4zSqtLkn7IlmOA=="></script>
+<script type="text/javascript" src="/bundle.min.8047d1b063234db7e4f910f9d54abd62686428b775f14770e6c6314980002e1d3014e6f9d5df0df37d0a5fd3a15f20b320fb949c4f014e74059de1c57eb0e40a.js" integrity="sha512-gEfRsGMjTbfk&#43;RD51Uq9YmhkKLd18Udw5sYxSYAALh0wFOb51d8N830KX9OhXyCzIPuUnE8BTnQFneHFfrDkCg=="></script>
 
 
 

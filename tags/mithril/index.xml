@@ -6,10 +6,20 @@
     <description>Recent content in Mithril on Mohammed Saud</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 23 Jun 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 24 Jul 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://saud.gq/tags/mithril/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Web Interface for Retroshare - Update 2</title>
+      <link>https://saud.gq/posts/2019/07/web-interface-for-retroshare-update-2/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://saud.gq/posts/2019/07/web-interface-for-retroshare-update-2/</guid>
+      <description>This is a mirror of a post I wrote on the Freifunk blog.
+ I Realized that the visual appearance of the application felt very bland and uninteresting, so I decided to shift some of my focus to the design and visual aspect of the UI. I did plenty of reading about UI/UX design principles and modern best practices during this time. And looks like it turned out pretty well, and is definitely a good improvement from the previous appearance.</description>
+    </item>
     
     <item>
       <title>Web Interface for Retroshare - Update 1</title>

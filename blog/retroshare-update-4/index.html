@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="monetization" content="$ilp.uphold.com/wJiQfZf9NYg8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    
+<title>Saud | Web Interface for Retroshare - Final Update</title>
+
+    <link rel="stylesheet" href="/normalize.css" />
+    <link rel="stylesheet" id="darktheme" href="/theme.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="content">
+      
+
+<header>
+  <a href="/">Home</a>
+
+  <h1>
+    Web Interface for Retroshare - Final Update
+  </h1>
+  <strong><time datetime=2019-08-25>2019-08-25</time></strong>
+</header>
+
+<main>
+<blockquote>
+<p>This is a mirror of a <a href="https://blog.freifunk.net/2019/08/25/retroshare-web-interface-final-update/">post</a> I wrote on the <a href="https://blog.freifunk.net">Freifunk blog</a>.</p>
+</blockquote>
+<p>The GSoC program is about to finish, and this will be my last GSoC-related blog post for Retroshare’s new web interface.</p>
+<p>I will use this blog to provide an overview of how the app works, all my work done during this period, features, completed milestones, what couldn’t be completed, and future roadmap.
+I will also explain and document the code structure in the hopes that potential contributors will find it easy to get started.</p>
+<ul>
+<li>The source code is present here: <a href="https://github.com/RetroShare/RSNewWebUI">https://github.com/RetroShare/RSNewWebUI</a></li>
+<li>And my fork over here: <a href="https://github.com/rottencandy/RSNewWebUI">https://github.com/rottencandy/RSNewWebUI</a></li>
+<li>If you want to see the work I have done exclusively during GSoC, it is all in a single Pull Request: <a href="https://github.com/RetroShare/RSNewWebUI/pull/1">https://github.com/RetroShare/RSNewWebUI/pull/1</a></li>
+</ul>
+<h2 id="overview">Overview</h2>
+<p>The purpose is very simple; A web-app that can be used to manage your Retroshare node, interact with friend nodes, and make use of Retroshare’s features.
+In other words, an alternative to the Qt-based interface of the client app.</p>
+<p>This is made possible through the <a href="https://github.com/RetroShare/RetroShare/tree/master/jsonapi-generator">JSON API</a> provided by Retroshare, which allows everyone to utilize the power of Retroshare’s technology to create their own services, interfaces, or even build apps on top of Retroshare.</p>
+<p>The web interface itself works in a pretty straightforward manner, making use of modern browsers to act as a front end for the Retroshare platform and it’s services.
+Made using JavaScript, and the only external library being used is <a href="https://mithril.js.org/">Mithril</a>, which is a very fast and lightweight framework for building single page web applications.</p>
+<h2 id="build-process">Build Process</h2>
+<p>If you look at the <a href="https://github.com/RetroShare/RSNewWebUI">source code</a>, you can see that it is built using <a href="https://doc.qt.io/qt-5/qmake-manual.html"><code>qmake</code></a>, the config file <code>webui.pro</code> executes build scripts in <code>webui-src/make-src</code>.</p>
+<pre style="background-color:#282828;">
+<code><span style="color:#fdf4c1aa;">webui-src/
+├── make-src/
+│   ├── build.bat
+│   ├── build.sh
+│   ├── chat.css
+│   ├── init.bat
+│   ├── init.sh
+│   ├── main.css
+│   ├── readme.md
+│   └── template.js
+</span></code></pre>
+<p>The build scripts in <code>webui-src/make-src</code> (most notably <code>build.sh</code>) iterate over all files from the source directory(<code>webui-src/app</code>), copying files into their respective destinations.</p>
+<p>All JavaScript files are compiled into <code>app.js</code> and CSS files into <code>app.css</code>, these compiled files are put into the destination directory which is <code>webui</code>.
+The build scripts also copy all the static files, from <code>webui-src/assets</code> over to the destination directory, maintaining their directory hierarchy.
+Static files are the ones that do not require any modification in order to be used, like the HTML, font files, some CSS styles, and so on.</p>
+<p>Another important aspect of the build process is how it compiles all the JavaScript files into a single file.
+Since CSS is simply a set of rules without any structure, the output file can be built simply by appending all the source <code>.css</code> files together, JavaScript however doesn’t work that way:</p>
+<p>You may have noticed another file in <code>make-src</code> called <code>template.js</code>.
+This file is used to create an entry point for the JavaScript files. It can be thought of as a kind of polyfill for <a href="https://requirejs.org/">require</a>.
+What this essentially does is, take all the <code>.js</code> source files and store them using objects in such a way that they are isolated from each other, and then enable interaction between them through exporting objects.</p>
+<p>To make a module’s components public, we have to refer them in the <code>module.exports</code> object, and we can use them inside other modules by importing them using the <code>require()</code> method.</br>
+The <code>module.exports</code> object is the only data that can be accessed outside of the module.</p>
+<h2 id="structure">Structure</h2>
+<p>Now that we know how <code>require()</code> and <code>module.exports</code> work, we can look into how the source code functions:</p>
+<pre style="background-color:#282828;">
+<code><span style="color:#fdf4c1aa;">app/
+├── channels/
+│   └── ...
+├── chat/
+│   └── ...
+├── config/
+│   └── ...
+├── files/
+│   └── ...
+├── home.js
+├── login.js
+├── mail/
+│   └── ...
+├── main.js
+├── mithril.js
+├── network/
+│   └── ...
+├── people/
+│   └── ...
+├── rswebui.js
+├── theme.css
+└── widgets.js
+</span></code></pre>
+<p>The source files are all in <code>webui-src/app</code>.
+I have tried to implement a structure loosely based on the <a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">MVC design pattern</a>.</br>
+Aside from separating data and views as objects and components, it makes intuitive use of <a href="https://mithril.js.org/components.html">Mithril components</a> and <a href="https://mithril.js.org/route.html">routing</a> concepts.</p>
+<p>Each folder contains the views and models for a single tab.
+All tabs have their own <a href="https://mithril.js.org/route.html#routeresolver">route resolver</a> that takes in the route parameters and resolves them to return the correct views for rendering.</p>
+<p>The entry point of all tabs happens in the resolver file, which also defines the layout of that tab. I will explain layout types shortly.</p>
+<p>Note how the file names consist of their respective tab names too.
+This is not just for convention, our <code>require</code> polyfill does not yet have the concept of directory structure, any file present in any directory and may be imported by using only it’s name.
+This causes issues when accessing files having same names, which is why tab name supersedes the file name.
+It is important to have unique names for all files.</p>
+<p>The <code>main.js</code> file contains mithril’s <a href="https://mithril.js.org/route.html#signature">m.route</a>, that defines the routing table and allows all navigation on the app.
+It detects whether the login keys have been verified and upon failing, reroutes to the login page using the <code>onSuccess()</code> callback.</p>
+<p>The <code>rswebui.js</code> contains methods that act as the bridge between the web interface and the Retroshare client.
+Mainly, abstracting the API calls and managing <code>async</code> background tasks.</p>
+<p>In a <a href="https://blog.freifunk.net/2019/07/22/web-interface-for-retroshare-update-2/">previous post</a>, I mentioned that I did a lot of reading on <a href="https://en.wikipedia.org/wiki/User_interface_design">UI</a> and <a href="https://en.wikipedia.org/wiki/User_experience_design">UX</a> design, highlighting how it shaped the look and feel of the web interface.</br>
+After learning the importance of consistency when studying <a href="https://en.wikipedia.org/wiki/Interaction_design">interaction design</a>, I set out to make the interface more consistent.</p>
+<p>In a nutshell, consistency refers to having uniformity in the UI, a form of repetition such that an action becomes predictable and intuitive to the user.</p>
+<p>It can easily be achieved by having a predefined set of rules on how the UI should behave when interacted with, and the best way to do this is to make a set of reusable components.
+And since this is about the UI and visuals, it has more to do with CSS than JavaScript. Most of the layout rules are defined in <code>theme.css</code>.</p>
+<p>The CSS class that houses all other widgets is the <code>tab-page</code> class.
+It’s the one containing all the elements under the <code>navbar</code>.
+All top level tab layouts use this and extend upon it.
+It can hold both full and half-width widgets, and position them according to the space taken by each.</p>
+<figure>
+  <img src="rs-page.png" alt="Blank layout" />
+  <figcaption>The default blank layout created by the tab-page class.</figcaption>
+</figure>
+<p>The next is the <code>sidebar</code> class, which defines the sidebar on the left of some tabs, allowing to choose sub sections within the tab.
+It must be used when there are multiple sections but are logically grouped inside the same tab.
+Since this is a very commonly used widget, I have put this inside <code>widgets.js</code>, a file that contains a collection of the most used components, so that it is easily available everywhere.
+It takes in two parameters: the list of sections, and the base route link of the tab.
+Note that the section link must be the same as it’s name for it to be resolved properly:</p>
+<pre style="background-color:#282828;">
+<code><span style="color:#fdf4c1;">m(widget.SideBar, {
+  tabs: tabsList,
+  baseRoute: </span><span style="color:#b8bb26;">&#39;/route/&#39;</span><span style="color:#fdf4c1;">,
+})</span><span style="color:#fdf4c1aa;">;
+</span></code></pre><figure>
+  <img src="rs-sidebar.png" alt="Sidebar" />
+  <figcaption>sidebar class used in the config tab.</figcaption>
+</figure>
+<p>The <code>widget</code> class is used as a preliminary frame for displaying small groups of input types together.
+For consistency, a directly interactable input must never be shown directly inside tab-page, but must be inside at least one <code>widget</code> frame.
+For additional uniformity, I have been using the <code>&lt;h3&gt;</code> followed by the <code>&lt;hr&gt;</code> tags as the immediately following elements to display and categorize a frame’s contents.</p>
+<figure>
+  <img src="rs-widget.png" alt="widget" />
+  <figcaption>A widget being used to create the interface for adding certificates.</figcaption>
+</figure>
+<p>The <code>progressbar</code> widget is a combination of a <code>&lt;span&gt;</code> tag relatively placed inside a <code>&lt;div&gt;</code> tag using the block-inline display attribute.
+To create the <code>progressbar</code> in mithril, just use:</p>
+<pre style="background-color:#282828;">
+<code><span style="color:#fdf4c1;">m(</span><span style="color:#b8bb26;">&#39;.progressbar&#39;</span><span style="color:#fdf4c1;">, {
+  style: {
+    content: rate </span><span style="color:#fe8019;">+ </span><span style="color:#b8bb26;">&#39;%&#39;
+  </span><span style="color:#fdf4c1;">}
+}, m(</span><span style="color:#b8bb26;">&#39;span.progress-status&#39;</span><span style="color:#fdf4c1;">, {
+  style: {
+    width: rate </span><span style="color:#fe8019;">+ </span><span style="color:#b8bb26;">&#39;%&#39;
+  </span><span style="color:#fdf4c1;">}
+}, rate))</span><span style="color:#fdf4c1aa;">;
+</span></code></pre><figure>
+  <img src="rs-progress.png" alt="progress bar" />
+  <figcaption>progressbars used in files tab.</figcaption>
+</figure>
+<p>And the CSS will handle the rest.</p>
+<p>The <code>tooltip</code> widget can be used to display additional content when the mouse pointer is hovered over it. And can be easily created using:</p>
+<pre style="background-color:#282828;">
+<code><span style="color:#fdf4c1;">m(</span><span style="color:#b8bb26;">&#39;.tooltip&#39;</span><span style="color:#fdf4c1;">, [
+  m(</span><span style="color:#b8bb26;">&#39;p&#39;</span><span style="color:#fdf4c1;">, </span><span style="color:#b8bb26;">&#39;normally visible content&#39;</span><span style="color:#fdf4c1;">),
+  m(</span><span style="color:#b8bb26;">&#39;.tooltiptext&#39;</span><span style="color:#fdf4c1;">, </span><span style="color:#b8bb26;">&#39;content visible when hovered&#39;</span><span style="color:#fdf4c1;">),
+])</span><span style="color:#fdf4c1aa;">;
+</span></code></pre><figure>
+  <img src="rs-tooltip.png" alt="tooltip" />
+  <figcaption>Example use of tooltip.</figcaption>
+</figure>
+<p>A modal or popup box can be used to display content which might be triggered by a user’s action, or can display information that requires immediate attention of the user.
+This is also present in the <code>widgets.js</code> file.
+It is made as a mithril component, so can be used normally with the <code>m()</code> selector.
+It also takes in other mithril components as attributes, allowing it to display any given html tag.</p>
+<pre style="background-color:#282828;">
+<code><span style="color:#fdf4c1;">widgets.popupMessage([</span><span style="font-style:italic;color:#928374;">/* Array of components to render */</span><span style="color:#fdf4c1;">])</span><span style="color:#fdf4c1aa;">;
+</span></code></pre><figure>
+  <img src="rs-popup.png" alt="popup" />
+  <figcaption>The popup view used in files tab.</figcaption>
+</figure>
+<p>Creating custom input types making use of the <code>&lt;input&gt;</code> tag is incredibly easy in mithril, but may initially be confusing to programmers used to vanilla JavaScript for event handling.
+Normally, to create a JS-controlled input field, you would do something like:</p>
+<pre style="background-color:#282828;">
+<code><span style="color:#fa5c4b;">let </span><span style="color:#fdf4c1;">text </span><span style="color:#fe8019;">= </span><span style="color:#fabd2f;">document</span><span style="color:#fdf4c1;">.getElementById(</span><span style="color:#b8bb26;">&#39;input&#39;</span><span style="color:#fdf4c1;">)</span><span style="color:#fdf4c1aa;">.value;
+</span></code></pre>
+<p>But mithril components can be controlled very easily by making use of the <code>onchange</code> and <code>oninput</code> event handlers:</p>
+<pre style="background-color:#282828;">
+<code><span style="color:#fdf4c1;">m(</span><span style="color:#b8bb26;">&#39;input[type=text]&#39;</span><span style="color:#fdf4c1;">, {
+  value: text,
+  </span><span style="color:#8ec07c;">oninput</span><span style="color:#fdf4c1;">: (e) </span><span style="color:#fa5c4b;">=&gt; </span><span style="color:#fdf4c1;">text </span><span style="color:#fe8019;">= </span><span style="color:#fdf4c1;">e.target.value,
+})</span><span style="color:#fdf4c1aa;">;
+</span></code></pre>
+<p>And <code>text</code> gets automatically updated with any value the user enters.
+Use <code>oninput</code> to get value after all the text is entered, and <code>onchange</code> for more finer control, which is fired every time a button is pressed.
+This method can be used with any input type like text, number, radio, checkbox, etc. and can be made to run any function, allowing for huge flexibility and control.</p>
+<h2 id="features">Features</h2>
+<p>All the features and milestones that were successfully completed:</p>
+<ul>
+<li>Get your certificate, add new friends by copying in their certificates.</li>
+<li>View, manage your identities and get info about friend identities.</li>
+<li>View and manage all your friend nodes and each of their locations, and basic info about them.</li>
+<li>Get info about your upload/download files and manage them, add new downloads through links.</li>
+<li>Check all your mails.</li>
+<li>View info about subscribed chat lobbies and publicly available lobbies.</li>
+<li>Change various configuration options of your Retroshare node such as network limits, file locations, default behavior, and such.</li>
+</ul>
+<h2 id="roadmap">Roadmap</h2>
+<p>Retroshare has a huge amount of features, and unfortunately this period wasn’t enough for me to cover all of them into the web interface.
+I plan on implementing the incomplete tabs and then extending the app with new functionality:</p>
+<h4 id="turtle-search">Turtle search:</h4>
+<p>As my mentor Cyril told me, this feature is very important since it makes it very easy to find and download new files, and is one of the features making use of stream data from the API.</br>
+Getting stream data has been a problem due to <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS</a> implemented on browsers, which is the reason this feature couldn’t be finished. I am constantly looking for a viable solution and will immediately finish implementing this when I find one.</p>
+<h4 id="sending-mail">Sending mail:</h4>
+<p>The web interface can only read mails for now, and it would be very nice to be able to send mails too.</p>
+<h4 id="forums">Forums:</h4>
+<p>I have already started work on the forums tab, and will finish it soon.
+This will allow users to interact with and manage forums entirely from inside the web interface.</p>
+<h4 id="channels">Channels:</h4>
+<p>Similarly, I am also working on channels. Another nice feature to have on the Web UI.</p>
+<h4 id="build-process-1">Build Process:</h4>
+<p>As shown above, the current build process is very barebones, and the <code>require</code> polyfill has no concept of directory hierarchy.
+This will eventually cause issues as the app grows.
+We need to upgrade the build tools, or find a new one.
+I think the most important point to keep in mind if choosing to go with a new one, is that the user should not have to install any additional dependencies.</p>
+<p>That’s about it.
+I encourage everyone to try out the app, it is very easy to install the web interface.
+There are even simple installation instructions on the <a href="https://github.com/RetroShare/RSNewWebUI">source page</a>! Feel free to get in touch if you have any suggestions or queries.
+You can generally find me lurking in the Developer forums in Retroshare.</p>
+<p>Many thanks to Google, and the amazing Freifunk community, especially my mentors, for giving me this opportunity.
+This has been a wonderful time for me, I learned a lot of new things that would help me contribute more towards free and open software.</p>
+
+</main>
+
+<hr/>
+
+
+    </div>
+
+    <footer>© Saud</footer>
+  </body>
+
+</html>

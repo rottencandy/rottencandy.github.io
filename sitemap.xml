@@ -1,71 +1,25 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
-  <url>
-    <loc>https://saud.gq/posts/2019/08/web-interface-for-retroshare-final-update/</loc>
-    <lastmod>2019-08-25T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/posts/2019/07/web-interface-for-retroshare-update-2/</loc>
-    <lastmod>2019-07-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/posts/2019/06/web-interface-for-retroshare-update-1/</loc>
-    <lastmod>2019-06-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/posts/2019/05/a-new-web-interface-for-retroshare/</loc>
-    <lastmod>2019-05-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/about/</loc>
-    <lastmod>2014-04-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/tags/gsoc/</loc>
-    <lastmod>2019-08-25T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/tags/mithril/</loc>
-    <lastmod>2019-08-25T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/</loc>
-    <lastmod>2019-08-25T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/posts/</loc>
-    <lastmod>2019-08-25T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/tags/retroshare/</loc>
-    <lastmod>2019-08-25T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://saud.gq/tags/</loc>
-    <lastmod>2019-08-25T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://saud.gq/</loc>
+    </url>
+    <url>
+        <loc>https://saud.gq/blog/</loc>
+    </url>
+    <url>
+        <loc>https://saud.gq/blog/a-new-web-interface-for-retroshare/</loc>
+        <lastmod>2019-05-23</lastmod>
+    </url>
+    <url>
+        <loc>https://saud.gq/blog/retroshare-update-2/</loc>
+        <lastmod>2019-06-23</lastmod>
+    </url>
+    <url>
+        <loc>https://saud.gq/blog/retroshare-update-3/</loc>
+        <lastmod>2019-07-24</lastmod>
+    </url>
+    <url>
+        <loc>https://saud.gq/blog/retroshare-update-4/</loc>
+        <lastmod>2019-08-25</lastmod>
+    </url>
 </urlset>

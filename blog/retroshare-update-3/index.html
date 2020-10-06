@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="monetization" content="$ilp.uphold.com/wJiQfZf9NYg8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    
+<title>Saud | Web Interface for Retroshare - Update 2</title>
+
+    <link rel="stylesheet" href="/normalize.css" />
+    <link rel="stylesheet" id="darktheme" href="/theme.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="content">
+      
+
+<header>
+  <a href="/">Home</a>
+
+  <h1>
+    Web Interface for Retroshare - Update 2
+  </h1>
+  <strong><time datetime=2019-07-24>2019-07-24</time></strong>
+</header>
+
+<main>
+<blockquote>
+<p>This is a mirror of a <a href="https://blog.freifunk.net/2019/07/22/web-interface-for-retroshare-update-2/">post</a> I wrote on the <a href="https://blog.freifunk.net">Freifunk blog</a>.</p>
+</blockquote>
+<p><img src="https://saud.gq/blog/retroshare-update-3/rs-login.jpg" alt="Login page" /></p>
+<p>I Realized that the visual appearance of the application felt very bland and uninteresting, so I decided to shift some of my focus to the design and visual aspect of the UI.
+I did plenty of reading about UI/UX design principles and modern best practices during this time.
+And looks like it turned out pretty well, and is definitely a good improvement from the <a href="https://blog.freifunk.net/2019/06/23/web-interface-for-retroshare-update-1/">previous</a> appearance.
+Also, since this is my first attempt at doing professional-level UX design, there is probably room for improvement, so feedback and suggestions are always welcome.</p>
+<p>The general theme has been redone from scratch. I chose this soft blue color palette by taking inspiration from the main app’s look:</p>
+<p><img src="https://saud.gq/blog/retroshare-update-3/rs-home.jpg" alt="Home page" /></p>
+<p>The home tab, along with displaying the user certificate, now also allows to add friends by using their certificates.
+It is possible to add friends by copying the certificate contents, dragging and dropping the file, or simply selecting it from the file manager.</p>
+<p>Implemented modal messages within the browser that can be used as a popup dialogue box to display any kind of information (here showing information extracted from a Retroshare certificate):</p>
+<p><img src="https://saud.gq/blog/retroshare-update-3/rs-modal.jpg" alt="Modal" /></p>
+<p>As you can see, the navbar has also been revamped.
+And the best thing about it? Icons! I along with my mentors agreed on using the <a href="https://fontawesome.com/">Font Awesome</a> icon library, which is open source (licensed with a combination of MIT, CC 4.0 &amp; OFL 1.1 licenses).
+I can now utilize icons across the whole app.</p>
+<p><img src="https://saud.gq/blog/retroshare-update-3/rs-nav.jpg" alt="Nav bar" /></p>
+<p>The downloads tab has also been redesigned.
+Now showing all downloads in a slightly different way.
+This layout was chosen with extensibility in mind, it can easily be extended to contain a additional file-related settings and chunk views by having an expandable options box for each file.</p>
+<p><img src="https://saud.gq/blog/retroshare-update-3/rs-dl.jpg" alt="Downloads page" /></p>
+<p>The config tab can now be used to change a lot of the setting options similar to the main app.
+Network, node, services, files and people sections from the app have been implemented.
+I will shortly finish the remaining sections too.</p>
+<p><img src="https://saud.gq/blog/retroshare-update-3/rs-config-1.jpg" alt="Config page 1" />
+<img src="https://saud.gq/blog/retroshare-update-3/rs-config-2.jpg" alt="Home page 2" /></p>
+<p>Also notice the tooltip icon. Which when hovered on, gives a brief description about the option. Just like in Retroshare:</p>
+<p><img src="https://saud.gq/blog/retroshare-update-3/rs-tooltip.jpg" alt="Tooltip" /></p>
+<h2 id="next-steps">Next Steps</h2>
+<p>Now that the design is steadily making way for a more detailed and specialized variety of widgets and components, I am working on creating tabs for Network, People, Chats, Mail, Channels &amp; Forums so that the Web Interface can finally become a fully usable alternative to the main client app.</p>
+<p>You can try out the Web Interface by cloning it from the repository: <a href="https://github.com/RetroShare/RSNewWebUI">https://github.com/RetroShare/RSNewWebUI</a>, and my fork: <a href="https://github.com/rottencandy/RSNewWebUI">https://github.com/rottencandy/RSNewWebUI</a>.
+Again, I am always happy to receive feedback and suggestions for improving the Web Interface.</p>
+
+</main>
+
+<hr/>
+
+
+    </div>
+
+    <footer>© Saud</footer>
+  </body>
+
+</html>

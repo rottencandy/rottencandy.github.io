@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="monetization" content="$ilp.uphold.com/wJiQfZf9NYg8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    
+<title>Saud | Web Interface for Retroshare - Update 1</title>
+
+    <link rel="stylesheet" href="/normalize.css" />
+    <link rel="stylesheet" id="darktheme" href="/theme.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="content">
+      
+
+<header>
+  <a href="/">Home</a>
+
+  <h1>
+    Web Interface for Retroshare - Update 1
+  </h1>
+  <strong><time datetime=2019-06-23>2019-06-23</time></strong>
+</header>
+
+<main>
+<blockquote>
+<p>This is a mirror of a <a href="https://blog.freifunk.net/2019/06/23/web-interface-for-retroshare-update-1/">post</a> I wrote on the <a href="https://blog.freifunk.net">Freifunk blog</a>.</p>
+</blockquote>
+<p>Since the <a href="https://blog.freifunk.net/2019/05/23/a-new-web-interface-for-retroshare/">first post</a>, there has been quite a lot of progress on development of the new Web Interface for Retroshare.</p>
+<p>As the build process is not using any JavaScript-specific tools, I spent a lot of time making sure that the development process was made as streamlined as possible.
+All the components are logically isolated and functionality moved to their relevant places.
+Using <a href="https://mithril.js.org/">mithril</a> also helped a lot, which has this concept of <a href="https://mithril.js.org/components.html">components</a>, a mechanism to encapsulate different parts of views.
+Which massively helps in project organization and code reuse.</p>
+<p>One more important feature which was completed is automatic data refresh and redrawing of views.
+I decided to use a combination of mithril’s <a href="https://mithril.js.org/lifecycle-methods.html">lifecycle methods</a> and JavaScript’s browser <code>setTimeout</code> method that can be used to create background tasks which when attached to their respective components, will periodically fetch and refresh data.
+The background task gets activated whenever a component’s view is rendered and gets killed when a component goes off of display.
+Mithril also has it’s own <a href="https://mithril.js.org/autoredraw.html">auto-redraw</a> system which refreshes views when a component’s event handlers are called.
+But it does not refresh when component attributes are updated, or when raw promises are resolved.</p>
+<p>Here are a few screenshots displaying the new UI style:</p>
+<p><img src="https://saud.gq/blog/retroshare-update-2/rs-login.png" alt="Login page" />
+<img src="https://saud.gq/blog/retroshare-update-2/rs-home.png" alt="Home page" />
+<img src="https://saud.gq/blog/retroshare-update-2/rs-dloads.png" alt="Downloads page" /></p>
+<h2 id="next-steps">Next Steps</h2>
+<p>Along with the goals displayed in the first post, these will be given a higher priority for completion during the coming phase leading up to the next evaluation:</p>
+<ul>
+<li>Node panel in config tab for handling most(if not all) network settings like node information, Net mode, NAT, Download limits, ports, etc.</li>
+<li>Shares panel showing shared files, allowing to edit them, set view permissions, among other options.</li>
+<li>Peers tab to display connected peers and set their reputations.</li>
+<li>Modify the main Retroshare client to enable/disable the WebUI.</li>
+</ul>
+
+</main>
+
+<hr/>
+
+
+    </div>
+
+    <footer>© Saud</footer>
+  </body>
+
+</html>

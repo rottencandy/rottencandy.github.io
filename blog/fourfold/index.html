@@ -72,7 +72,7 @@ Only half the vertices required! The shader handles the coloring and shadows. If
 <h2 id="player">Player</h2>
 <p>The player character/cube/whatever is just a smaller version of the platform. The white light filling it up is calculated in the shader itself, by simply stepping the pixel height with the steps taken:</p>
 <pre style="background-color:#282828;">
-<code><span style="color:#fdf4c1aa;">pixelHeight </span><span style="color:#fe8019;">= </span><span style="color:#d3869b;">1.0 </span><span style="color:#fe8019;">- </span><span style="color:#fdf4c1aa;">(aVertexPos.</span><span style="color:#fdf4c1;">z </span><span style="color:#fe8019;">/</span><span style="color:#fdf4c1aa;"> height);
+<code class="language-c" data-lang="c"><span style="color:#fdf4c1aa;">pixelHeight </span><span style="color:#fe8019;">= </span><span style="color:#d3869b;">1.0 </span><span style="color:#fe8019;">- </span><span style="color:#fdf4c1aa;">(aVertexPos.</span><span style="color:#fdf4c1;">z </span><span style="color:#fe8019;">/</span><span style="color:#fdf4c1aa;"> height);
 </span><span style="color:#fe8019;">...
 </span><span style="color:#fa5c4b;">float</span><span style="color:#fdf4c1aa;"> light </span><span style="color:#fe8019;">= </span><span style="color:#fdf4c1;">step(pixelHeight, curStep)</span><span style="color:#fdf4c1aa;">;
 </span></code></pre>
@@ -111,7 +111,7 @@ Looking at <a href="https://www.cssfontstack.com">cssfontsack.com</a>, I picked 
 <img src="https://saud.gq/blog/fourfold/fonts.png" alt="A comparision of fonts" />
 All it takes is a single line of CSS:</p>
 <pre style="background-color:#282828;">
-<code><span style="color:#b8bb26;">font: 100 2.5rem Trebuchet, </span><span style="font-weight:bold;color:#fa5c4b;">sans-serif</span><span style="color:#b8bb26;">;
+<code class="language-css" data-lang="css"><span style="color:#b8bb26;">font: 100 2.5rem Trebuchet, </span><span style="font-weight:bold;color:#fa5c4b;">sans-serif</span><span style="color:#b8bb26;">;
 </span></code></pre><h2 id="web-monetization">Web monetization</h2>
 <p><a href="https://webmonetization.org/">Web monetization</a> is a really cool protocol that I hope becomes more mainstream.</p>
 <p>I was careful to not take the game to pay-to-win territory.

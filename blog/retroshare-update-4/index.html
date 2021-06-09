@@ -6,7 +6,7 @@
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <meta name="author" content="Mohammed Saud" />
     
-<title>Saud | Web Interface for Retroshare - Final Update</title>
+<title>Web Interface for Retroshare - Final Update - Saud</title>
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_US" />
 <meta property="og:title" content="Web Interface for Retroshare - Final Update" />
@@ -50,13 +50,15 @@ I will also explain and document the code structure in the hopes that potential 
 <li>And my fork over here: <a href="https://github.com/rottencandy/RSNewWebUI">https://github.com/rottencandy/RSNewWebUI</a></li>
 <li>If you want to see the work I have done exclusively during GSoC, it is all in a single Pull Request: <a href="https://github.com/RetroShare/RSNewWebUI/pull/1">https://github.com/RetroShare/RSNewWebUI/pull/1</a></li>
 </ul>
-<h2 id="overview">Overview</h2>
+<h2 id="overview">Overview<a href="#overview">#</a>
+</h2>
 <p>The purpose is very simple; A web-app that can be used to manage your Retroshare node, interact with friend nodes, and make use of Retroshare’s features.
 In other words, an alternative to the Qt-based interface of the client app.</p>
 <p>This is made possible through the <a href="https://github.com/RetroShare/RetroShare/tree/master/jsonapi-generator">JSON API</a> provided by Retroshare, which allows everyone to utilize the power of Retroshare’s technology to create their own services, interfaces, or even build apps on top of Retroshare.</p>
 <p>The web interface itself works in a pretty straightforward manner, making use of modern browsers to act as a front end for the Retroshare platform and it’s services.
 Made using JavaScript, and the only external library being used is <a href="https://mithril.js.org/">Mithril</a>, which is a very fast and lightweight framework for building single page web applications.</p>
-<h2 id="build-process">Build Process</h2>
+<h2 id="build-process">Build Process<a href="#build-process">#</a>
+</h2>
 <p>If you look at the <a href="https://github.com/RetroShare/RSNewWebUI">source code</a>, you can see that it is built using <a href="https://doc.qt.io/qt-5/qmake-manual.html"><code>qmake</code></a>, the config file <code>webui.pro</code> executes build scripts in <code>webui-src/make-src</code>.</p>
 <pre style="background-color:#282828;">
 <code><span style="color:#fdf4c1aa;">webui-src/
@@ -81,7 +83,8 @@ This file is used to create an entry point for the JavaScript files. It can be t
 What this essentially does is, take all the <code>.js</code> source files and store them using objects in such a way that they are isolated from each other, and then enable interaction between them through exporting objects.</p>
 <p>To make a module’s components public, we have to refer them in the <code>module.exports</code> object, and we can use them inside other modules by importing them using the <code>require()</code> method.</br>
 The <code>module.exports</code> object is the only data that can be accessed outside of the module.</p>
-<h2 id="structure">Structure</h2>
+<h2 id="structure">Structure<a href="#structure">#</a>
+</h2>
 <p>Now that we know how <code>require()</code> and <code>module.exports</code> work, we can look into how the source code functions:</p>
 <pre style="background-color:#282828;">
 <code><span style="color:#fdf4c1aa;">app/
@@ -207,7 +210,8 @@ Normally, to create a JS-controlled input field, you would do something like:</p
 <p>And <code>text</code> gets automatically updated with any value the user enters.
 Use <code>oninput</code> to get value after all the text is entered, and <code>onchange</code> for more finer control, which is fired every time a button is pressed.
 This method can be used with any input type like text, number, radio, checkbox, etc. and can be made to run any function, allowing for huge flexibility and control.</p>
-<h2 id="features">Features</h2>
+<h2 id="features">Features<a href="#features">#</a>
+</h2>
 <p>All the features and milestones that were successfully completed:</p>
 <ul>
 <li>Get your certificate, add new friends by copying in their certificates.</li>
@@ -218,20 +222,26 @@ This method can be used with any input type like text, number, radio, checkbox, 
 <li>View info about subscribed chat lobbies and publicly available lobbies.</li>
 <li>Change various configuration options of your Retroshare node such as network limits, file locations, default behavior, and such.</li>
 </ul>
-<h2 id="roadmap">Roadmap</h2>
+<h2 id="roadmap">Roadmap<a href="#roadmap">#</a>
+</h2>
 <p>Retroshare has a huge amount of features, and unfortunately this period wasn’t enough for me to cover all of them into the web interface.
 I plan on implementing the incomplete tabs and then extending the app with new functionality:</p>
-<h4 id="turtle-search">Turtle search:</h4>
+<h4 id="turtle-search">Turtle search:<a href="#turtle-search">#</a>
+</h4>
 <p>As my mentor Cyril told me, this feature is very important since it makes it very easy to find and download new files, and is one of the features making use of stream data from the API.</br>
 Getting stream data has been a problem due to <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS</a> implemented on browsers, which is the reason this feature couldn’t be finished. I am constantly looking for a viable solution and will immediately finish implementing this when I find one.</p>
-<h4 id="sending-mail">Sending mail:</h4>
+<h4 id="sending-mail">Sending mail:<a href="#sending-mail">#</a>
+</h4>
 <p>The web interface can only read mails for now, and it would be very nice to be able to send mails too.</p>
-<h4 id="forums">Forums:</h4>
+<h4 id="forums">Forums:<a href="#forums">#</a>
+</h4>
 <p>I have already started work on the forums tab, and will finish it soon.
 This will allow users to interact with and manage forums entirely from inside the web interface.</p>
-<h4 id="channels">Channels:</h4>
+<h4 id="channels">Channels:<a href="#channels">#</a>
+</h4>
 <p>Similarly, I am also working on channels. Another nice feature to have on the Web UI.</p>
-<h4 id="build-process-1">Build Process:</h4>
+<h4 id="build-process-1">Build Process:<a href="#build-process-1">#</a>
+</h4>
 <p>As shown above, the current build process is very barebones, and the <code>require</code> polyfill has no concept of directory hierarchy.
 This will eventually cause issues as the app grows.
 We need to upgrade the build tools, or find a new one.

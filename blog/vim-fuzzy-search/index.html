@@ -56,20 +56,18 @@ similar to <code>:grep</code> but more interactive.</p>
 and then it allows narrowing down to desired results by filtering through them.</p>
 <p>I want to search through all files recursively under the currently active directory,
 so we can just <code>cat</code> all the files and pass them to <code>fzf</code>, like:</p>
-<pre style="background-color:#282828;">
-<code class="language-sh" data-lang="sh"><span style="color:#fdf4c1;">$ find ./ -exec cat {} </span><span style="color:#b8bb26;">\; </span><span style="color:#fe8019;">| </span><span style="color:#fdf4c1;">fzf
-</span><span style="font-style:italic;color:#928374;">#(...)
-</span><span style="color:#fdf4c1;">matched_text </span><span style="font-style:italic;color:#928374;"># output after fzf selection
-</span></code></pre>
+<pre data-lang="sh" class="language-sh "><code class="language-sh" data-lang="sh">$ find ./ -exec cat {} \; | fzf
+#(...)
+matched_text # output after fzf selection
+</code></pre>
 <p>But I don't really want to search through all the ignored and hidden files,
 we need a way to exclude them from our output.
 What if we instead use <a href="https://github.com/BurntSushi/ripgrep">ripgrep</a>?</p>
-<pre style="background-color:#282828;">
-<code class="language-sh" data-lang="sh"><span style="color:#fdf4c1;">$ cd ~/code/dotfiles
-$ rg --line-number </span><span style="color:#b8bb26;">&#39;.*&#39; </span><span style="color:#fe8019;">| </span><span style="color:#fdf4c1;">fzf
-</span><span style="font-style:italic;color:#928374;">#(...)
-</span><span style="color:#fdf4c1;">gitconfig:21:  line-numbers = true
-</span></code></pre>
+<pre data-lang="sh" class="language-sh "><code class="language-sh" data-lang="sh">$ cd ~/code/dotfiles
+$ rg --line-number '.*' | fzf
+#(...)
+gitconfig:21:  line-numbers = true
+</code></pre>
 <p>This makes it much simpler,
 we match <em>&quot;everything&quot;</em> using <code>.*</code>, and pass it all to <code>fzf</code>.
 Since <code>rg</code> searches recursively by default, we don't have to worry about using <code>find</code> either.</p>
@@ -80,22 +78,20 @@ Note that the result uses the format <code>{FILE_PATH}:{LINE_NUMBER}: {MATCHED_T
 </h2>
 <p>When <code>fzf</code> is installed correctly, it comes with a little <a href="https://github.com/junegunn/fzf/blob/master/README-VIM.md">vim wrapper</a> that lets us integrate the command using vimscript.</p>
 <p>The core function that enables this is <code>fzf#run</code>, which takes in the source and provides the result to a sink:</p>
-<pre style="background-color:#282828;">
-<code class="language-vim" data-lang="vim"><span style="color:#fabd2f;">nnoremap &lt;silent&gt; &lt;Leader&gt;</span><span style="color:#fdf4c1aa;">s :call </span><span style="color:#fabd2f;">fzf#run</span><span style="color:#fdf4c1aa;">({
-  </span><span style="color:#fa5c4b;">\ </span><span style="color:#b8bb26;">&#39;source&#39;</span><span style="color:#fdf4c1aa;">: </span><span style="color:#b8bb26;">&#39;rg --line-number &#39;&#39;.*&#39;&#39;&#39;</span><span style="color:#fdf4c1aa;">,
-  </span><span style="color:#fa5c4b;">\ </span><span style="color:#b8bb26;">&#39;sink&#39;</span><span style="color:#fdf4c1aa;">: </span><span style="color:#fabd2f;">function</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;&lt;sid&gt;sinkFunction&#39;</span><span style="color:#fdf4c1aa;">),
-})</span><span style="color:#fabd2f;">&lt;CR&gt;
-</span></code></pre>
+<pre data-lang="vim" class="language-vim "><code class="language-vim" data-lang="vim">nnoremap <silent> <Leader>s :call fzf#run({
+  \ 'source': 'rg --line-number ''.*''',
+  \ 'sink': function('<sid>sinkFunction'),
+})<CR>
+</code></pre>
 <p>This may look intimidating if you're new to vimscript, but it's really simple.
 We create a key mapping which calls <code>fzf#run</code> with the source as <code>rg --line-number ''.*''</code>(The <code>''</code> is just vim's way of escaping quotes inside strings),
 and a sink function <code>sinkFunction</code> that the result is passed to.</p>
 <p>Let's define the sink function to open the file from the provided result:</p>
-<pre style="background-color:#282828;">
-<code class="language-vim" data-lang="vim"><span style="color:#fa5c4b;">fun</span><span style="color:#fdf4c1aa;">! </span><span style="color:#fabd2f;">s:sinkFunction</span><span style="color:#fdf4c1aa;">(result)
-  </span><span style="color:#fabd2f;">let</span><span style="color:#fdf4c1aa;"> filePath = </span><span style="color:#fabd2f;">split</span><span style="color:#fdf4c1aa;">(</span><span style="color:#fabd2f;">a</span><span style="color:#fa5c4b;">:</span><span style="color:#fdf4c1aa;">result, </span><span style="color:#b8bb26;">&#39;:&#39;</span><span style="color:#fdf4c1aa;">)
-  </span><span style="color:#fabd2f;">exec </span><span style="color:#b8bb26;">&#39;edit +&#39; </span><span style="color:#fa5c4b;">. </span><span style="color:#fdf4c1;">l:filePath</span><span style="color:#fdf4c1aa;">[</span><span style="color:#d3869b;">1</span><span style="color:#fdf4c1aa;">] </span><span style="color:#fa5c4b;">. </span><span style="color:#b8bb26;">&#39; &#39; </span><span style="color:#fa5c4b;">. </span><span style="color:#fdf4c1;">l:filePath</span><span style="color:#fdf4c1aa;">[</span><span style="color:#d3869b;">0</span><span style="color:#fdf4c1aa;">]
-</span><span style="color:#fa5c4b;">endfun
-</span></code></pre>
+<pre data-lang="vim" class="language-vim "><code class="language-vim" data-lang="vim">fun! s:sinkFunction(result)
+  let filePath = split(a:result, ':')
+  exec 'edit +' . l:filePath[1] . ' ' . l:filePath[0]
+endfun
+</code></pre>
 <p>The file path and line number is extracted from the result by splitting it into multiple strings at the <code>:</code> points.</p>
 <p>We then use this to create and run the command to load a file at a given line,
 which is in the format <code>edit +{LINE_NUMBER} {FILE_PATH}</code>.</p>
@@ -109,13 +105,12 @@ I decided to see if I could do more here.</p>
 </h2>
 <p>Fzf has this <code>--preview</code> option, that when supplied with a command, shows it's output in a little window as we go through the results.
 And this works in vim too, we could use this to show a preview of the file that's currently being searched.</p>
-<pre style="background-color:#282828;">
-<code class="language-vim" data-lang="vim"><span style="color:#fabd2f;">nnoremap &lt;silent&gt; &lt;Leader&gt;</span><span style="color:#fdf4c1aa;">s :call </span><span style="color:#fabd2f;">fzf#run</span><span style="color:#fdf4c1aa;">({
-  </span><span style="color:#fa5c4b;">\ </span><span style="color:#b8bb26;">&#39;source&#39;</span><span style="color:#fdf4c1aa;">: </span><span style="color:#b8bb26;">&#39;rg --line-number &#39;&#39;.*&#39;&#39;&#39;</span><span style="color:#fdf4c1aa;">,
-  </span><span style="color:#fa5c4b;">\ </span><span style="color:#b8bb26;">&#39;options&#39;</span><span style="color:#fdf4c1aa;">: </span><span style="color:#b8bb26;">&#39;--delimiter : --preview &quot;bat --color=always {1} -H {2}&quot; --preview-window &quot;+{2}/2&quot;&#39;</span><span style="color:#fdf4c1aa;">,
-  </span><span style="color:#fa5c4b;">\ </span><span style="color:#b8bb26;">&#39;sink&#39;</span><span style="color:#fdf4c1aa;">: </span><span style="color:#fabd2f;">function</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;&lt;sid&gt;sinkFunction&#39;</span><span style="color:#fdf4c1aa;">),
-  </span><span style="color:#fa5c4b;">\</span><span style="color:#fdf4c1aa;"> })</span><span style="color:#fabd2f;">&lt;CR&gt;
-</span></code></pre>
+<pre data-lang="vim" class="language-vim "><code class="language-vim" data-lang="vim">nnoremap <silent> <Leader>s :call fzf#run({
+  \ 'source': 'rg --line-number ''.*''',
+  \ 'options': '--delimiter : --preview "bat --color=always {1} -H {2}" --preview-window "+{2}/2"',
+  \ 'sink': function('<sid>sinkFunction'),
+  \ })<CR>
+</code></pre>
 <p>The <code>fzf#run</code> function also takes in extra <code>options</code> that get passed to <code>fzf</code>,
 and here we use <a href="https://github.com/sharkdp/bat">bat</a> to preview the file in all it's syntax-highlighted glory.</p>
 <p>We can also make <code>bat</code> highlight the matching line, and make <code>fzf</code> scroll the preview window to the line.</p>
@@ -130,21 +125,21 @@ and this method lacks the persistence of the quickfix list.</p>
 <p>But this is still something I'd use when I'm too lazy to <code>:grep</code>,
 and just want to immediately jump to a location that pops into my mind.</p>
 <p>Here's a slightly cleaned up version, if you'd like to try it:</p>
-<pre style="background-color:#282828;">
-<code class="language-vim" data-lang="vim"><span style="color:#fa5c4b;">fun</span><span style="color:#fdf4c1aa;">! </span><span style="color:#fabd2f;">s:openFileAtLocation</span><span style="color:#fdf4c1aa;">(result)
-  </span><span style="color:#fa5c4b;">if </span><span style="color:#fabd2f;">len</span><span style="color:#fdf4c1aa;">(</span><span style="color:#fabd2f;">a</span><span style="color:#fa5c4b;">:</span><span style="color:#fdf4c1aa;">result) </span><span style="color:#fa5c4b;">== </span><span style="color:#d3869b;">0
-    </span><span style="color:#fa5c4b;">return
+<pre data-lang="vim" class="language-vim "><code class="language-vim" data-lang="vim">fun! s:openFileAtLocation(result)
+  if len(a:result) == 0
+    return
   endif
-  </span><span style="color:#fabd2f;">let</span><span style="color:#fdf4c1aa;"> filePos = </span><span style="color:#fabd2f;">split</span><span style="color:#fdf4c1aa;">(</span><span style="color:#fabd2f;">a</span><span style="color:#fa5c4b;">:</span><span style="color:#fdf4c1aa;">result, </span><span style="color:#b8bb26;">&#39;:&#39;</span><span style="color:#fdf4c1aa;">)
-  </span><span style="color:#fabd2f;">exec </span><span style="color:#b8bb26;">&#39;edit +&#39; </span><span style="color:#fa5c4b;">. </span><span style="color:#fdf4c1;">l:filePos</span><span style="color:#fdf4c1aa;">[</span><span style="color:#d3869b;">1</span><span style="color:#fdf4c1aa;">] </span><span style="color:#fa5c4b;">. </span><span style="color:#b8bb26;">&#39; &#39; </span><span style="color:#fa5c4b;">. </span><span style="color:#fdf4c1;">l:filePos</span><span style="color:#fdf4c1aa;">[</span><span style="color:#d3869b;">0</span><span style="color:#fdf4c1aa;">]
-</span><span style="color:#fa5c4b;">endfun
+  let filePos = split(a:result, ':')
+  exec 'edit +' . l:filePos[1] . ' ' . l:filePos[0]
+endfun
 
-</span><span style="color:#fabd2f;">nnoremap &lt;silent&gt; &lt;Leader&gt;</span><span style="color:#fdf4c1aa;">s :call </span><span style="color:#fabd2f;">fzf#run</span><span style="color:#fdf4c1aa;">(</span><span style="color:#fabd2f;">fzf#wrap</span><span style="color:#fdf4c1aa;">({
-  </span><span style="color:#fa5c4b;">\ </span><span style="color:#b8bb26;">&#39;source&#39;</span><span style="color:#fdf4c1aa;">: </span><span style="color:#b8bb26;">&#39;rg --line-number &#39;&#39;.*&#39;&#39;&#39;</span><span style="color:#fdf4c1aa;">,
-  </span><span style="color:#fa5c4b;">\ </span><span style="color:#b8bb26;">&#39;options&#39;</span><span style="color:#fdf4c1aa;">: </span><span style="color:#b8bb26;">&#39;--delimiter : --preview &quot;bat --style=plain --color=always {1} -H {2}&quot; --preview-window &quot;+{2}/2&quot;&#39;</span><span style="color:#fdf4c1aa;">,
-  </span><span style="color:#fa5c4b;">\ </span><span style="color:#b8bb26;">&#39;sink&#39;</span><span style="color:#fdf4c1aa;">: </span><span style="color:#fabd2f;">function</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;&lt;sid&gt;openFileAtLocation&#39;</span><span style="color:#fdf4c1aa;">),
-  </span><span style="color:#fa5c4b;">\</span><span style="color:#fdf4c1aa;"> }))</span><span style="color:#fabd2f;">&lt;CR&gt;
-</span></code></pre>
+nnoremap <silent> <Leader>s :call fzf#run(fzf#wrap({
+  \ 'source': 'rg --line-number ''.*''',
+  \ 'options': '--delimiter : --preview "bat --style=plain --color=always {1} -H {2}" --preview-window "+{2}/2"',
+  \ 'sink': function('<sid>openFileAtLocation'),
+  \ }))<CR>
+</code></pre>
+
 </main>
 
 <hr/>

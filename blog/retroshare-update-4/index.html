@@ -60,8 +60,7 @@ Made using JavaScript, and the only external library being used is <a href="http
 <h2 id="build-process">Build Process<a href="#build-process">#</a>
 </h2>
 <p>If you look at the <a href="https://github.com/RetroShare/RSNewWebUI">source code</a>, you can see that it is built using <a href="https://doc.qt.io/qt-5/qmake-manual.html"><code>qmake</code></a>, the config file <code>webui.pro</code> executes build scripts in <code>webui-src/make-src</code>.</p>
-<pre style="background-color:#282828;">
-<code><span style="color:#fdf4c1aa;">webui-src/
+<pre><code>webui-src/
 ├── make-src/
 │   ├── build.bat
 │   ├── build.sh
@@ -71,7 +70,7 @@ Made using JavaScript, and the only external library being used is <a href="http
 │   ├── main.css
 │   ├── readme.md
 │   └── template.js
-</span></code></pre>
+</code></pre>
 <p>The build scripts in <code>webui-src/make-src</code> (most notably <code>build.sh</code>) iterate over all files from the source directory(<code>webui-src/app</code>), copying files into their respective destinations.</p>
 <p>All JavaScript files are compiled into <code>app.js</code> and CSS files into <code>app.css</code>, these compiled files are put into the destination directory which is <code>webui</code>.
 The build scripts also copy all the static files, from <code>webui-src/assets</code> over to the destination directory, maintaining their directory hierarchy.
@@ -86,8 +85,7 @@ The <code>module.exports</code> object is the only data that can be accessed out
 <h2 id="structure">Structure<a href="#structure">#</a>
 </h2>
 <p>Now that we know how <code>require()</code> and <code>module.exports</code> work, we can look into how the source code functions:</p>
-<pre style="background-color:#282828;">
-<code><span style="color:#fdf4c1aa;">app/
+<pre><code>app/
 ├── channels/
 │   └── ...
 ├── chat/
@@ -109,7 +107,7 @@ The <code>module.exports</code> object is the only data that can be accessed out
 ├── rswebui.js
 ├── theme.css
 └── widgets.js
-</span></code></pre>
+</code></pre>
 <p>The source files are all in <code>webui-src/app</code>.
 I have tried to implement a structure loosely based on the <a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">MVC design pattern</a>.</br>
 Aside from separating data and views as objects and components, it makes intuitive use of <a href="https://mithril.js.org/components.html">Mithril components</a> and <a href="https://mithril.js.org/route.html">routing</a> concepts.</p>
@@ -142,12 +140,12 @@ It must be used when there are multiple sections but are logically grouped insid
 Since this is a very commonly used widget, I have put this inside <code>widgets.js</code>, a file that contains a collection of the most used components, so that it is easily available everywhere.
 It takes in two parameters: the list of sections, and the base route link of the tab.
 Note that the section link must be the same as it’s name for it to be resolved properly:</p>
-<pre style="background-color:#282828;">
-<code class="language-javascript" data-lang="javascript"><span style="color:#8ec07c;">m</span><span style="color:#fdf4c1aa;">(</span><span style="color:#fdf4c1;">widget</span><span style="color:#fdf4c1aa;">.</span><span style="color:#fdf4c1;">SideBar</span><span style="color:#fdf4c1aa;">, {
-  tabs: </span><span style="color:#fdf4c1;">tabsList</span><span style="color:#fdf4c1aa;">,
-  baseRoute: </span><span style="color:#b8bb26;">&#39;/route/&#39;</span><span style="color:#fdf4c1aa;">,
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m(widget.SideBar, {
+  tabs: tabsList,
+  baseRoute: '/route/',
 });
-</span></code></pre><figure>
+</code></pre>
+<figure>
   <img src="rs-sidebar.png" alt="Sidebar" />
   <figcaption>sidebar class used in the config tab.</figcaption>
 </figure>
@@ -160,28 +158,28 @@ For additional uniformity, I have been using the <code>&lt;h3&gt;</code> followe
 </figure>
 <p>The <code>progressbar</code> widget is a combination of a <code>&lt;span&gt;</code> tag relatively placed inside a <code>&lt;div&gt;</code> tag using the block-inline display attribute.
 To create the <code>progressbar</code> in mithril, just use:</p>
-<pre style="background-color:#282828;">
-<code class="language-javascript" data-lang="javascript"><span style="color:#8ec07c;">m</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;.progressbar&#39;</span><span style="color:#fdf4c1aa;">, {
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m('.progressbar', {
   style: {
-    content: </span><span style="color:#fdf4c1;">rate </span><span style="color:#fe8019;">+ </span><span style="color:#b8bb26;">&#39;%&#39;
-  </span><span style="color:#fdf4c1aa;">}
-}, </span><span style="color:#8ec07c;">m</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;span.progress-status&#39;</span><span style="color:#fdf4c1aa;">, {
+    content: rate + '%'
+  }
+}, m('span.progress-status', {
   style: {
-    width: </span><span style="color:#fdf4c1;">rate </span><span style="color:#fe8019;">+ </span><span style="color:#b8bb26;">&#39;%&#39;
-  </span><span style="color:#fdf4c1aa;">}
-}, </span><span style="color:#fdf4c1;">rate</span><span style="color:#fdf4c1aa;">));
-</span></code></pre><figure>
+    width: rate + '%'
+  }
+}, rate));
+</code></pre>
+<figure>
   <img src="rs-progress.png" alt="progress bar" />
   <figcaption>progressbars used in files tab.</figcaption>
 </figure>
 <p>And the CSS will handle the rest.</p>
 <p>The <code>tooltip</code> widget can be used to display additional content when the mouse pointer is hovered over it. And can be easily created using:</p>
-<pre style="background-color:#282828;">
-<code class="language-javascript" data-lang="javascript"><span style="color:#8ec07c;">m</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;.tooltip&#39;</span><span style="color:#fdf4c1aa;">, [
-  </span><span style="color:#8ec07c;">m</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;p&#39;</span><span style="color:#fdf4c1aa;">, </span><span style="color:#b8bb26;">&#39;normally visible content&#39;</span><span style="color:#fdf4c1aa;">),
-  </span><span style="color:#8ec07c;">m</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;.tooltiptext&#39;</span><span style="color:#fdf4c1aa;">, </span><span style="color:#b8bb26;">&#39;content visible when hovered&#39;</span><span style="color:#fdf4c1aa;">),
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m('.tooltip', [
+  m('p', 'normally visible content'),
+  m('.tooltiptext', 'content visible when hovered'),
 ]);
-</span></code></pre><figure>
+</code></pre>
+<figure>
   <img src="rs-tooltip.png" alt="tooltip" />
   <figcaption>Example use of tooltip.</figcaption>
 </figure>
@@ -189,24 +187,22 @@ To create the <code>progressbar</code> in mithril, just use:</p>
 This is also present in the <code>widgets.js</code> file.
 It is made as a mithril component, so can be used normally with the <code>m()</code> selector.
 It also takes in other mithril components as attributes, allowing it to display any given html tag.</p>
-<pre style="background-color:#282828;">
-<code class="language-javascript" data-lang="javascript"><span style="color:#fdf4c1;">widgets.</span><span style="color:#8ec07c;">popupMessage</span><span style="color:#fdf4c1aa;">([</span><span style="font-style:italic;color:#928374;">/* Array of components to render */</span><span style="color:#fdf4c1aa;">]);
-</span></code></pre><figure>
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">widgets.popupMessage([/* Array of components to render */]);
+</code></pre>
+<figure>
   <img src="rs-popup.png" alt="popup" />
   <figcaption>The popup view used in files tab.</figcaption>
 </figure>
 <p>Creating custom input types making use of the <code>&lt;input&gt;</code> tag is incredibly easy in mithril, but may initially be confusing to programmers used to vanilla JavaScript for event handling.
 Normally, to create a JS-controlled input field, you would do something like:</p>
-<pre style="background-color:#282828;">
-<code class="language-javascript" data-lang="javascript"><span style="color:#fa5c4b;">let </span><span style="color:#fdf4c1;">text </span><span style="color:#fe8019;">= </span><span style="color:#fabd2f;">document</span><span style="color:#fdf4c1;">.</span><span style="color:#fabd2f;">getElementById</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;input&#39;</span><span style="color:#fdf4c1aa;">).</span><span style="color:#fabd2f;">value</span><span style="color:#fdf4c1aa;">;
-</span></code></pre>
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">let text = document.getElementById('input').value;
+</code></pre>
 <p>But mithril components can be controlled very easily by making use of the <code>onchange</code> and <code>oninput</code> event handlers:</p>
-<pre style="background-color:#282828;">
-<code class="language-javascript" data-lang="javascript"><span style="color:#8ec07c;">m</span><span style="color:#fdf4c1aa;">(</span><span style="color:#b8bb26;">&#39;input[type=text]&#39;</span><span style="color:#fdf4c1aa;">, {
-  value: </span><span style="color:#fdf4c1;">text</span><span style="color:#fdf4c1aa;">,
-  </span><span style="color:#8ec07c;">oninput</span><span style="color:#fdf4c1aa;">: (</span><span style="color:#fdf4c1;">e</span><span style="color:#fdf4c1aa;">) </span><span style="color:#fa5c4b;">=&gt; </span><span style="color:#fdf4c1;">text </span><span style="color:#fe8019;">= </span><span style="color:#fdf4c1;">e</span><span style="color:#fdf4c1aa;">.</span><span style="color:#fabd2f;">target</span><span style="color:#fdf4c1aa;">.</span><span style="color:#fabd2f;">value</span><span style="color:#fdf4c1aa;">,
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m('input[type=text]', {
+  value: text,
+  oninput: (e) => text = e.target.value,
 });
-</span></code></pre>
+</code></pre>
 <p>And <code>text</code> gets automatically updated with any value the user enters.
 Use <code>oninput</code> to get value after all the text is entered, and <code>onchange</code> for more finer control, which is fired every time a button is pressed.
 This method can be used with any input type like text, number, radio, checkbox, etc. and can be made to run any function, allowing for huge flexibility and control.</p>

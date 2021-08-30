@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://saud.gq/</loc>
+        <loc>https://saud.wtf/</loc>
     </url>
     <url>
-        <loc>https://saud.gq/blog/</loc>
+        <loc>https://saud.wtf/blog/</loc>
     </url>
     <url>
-        <loc>https://saud.gq/blog/a-new-web-interface-for-retroshare/</loc>
+        <loc>https://saud.wtf/blog/a-new-web-interface-for-retroshare/</loc>
         <lastmod>2019-05-23</lastmod>
     </url>
     <url>
-        <loc>https://saud.gq/blog/fourfold/</loc>
+        <loc>https://saud.wtf/blog/fourfold/</loc>
         <lastmod>2020-10-10</lastmod>
     </url>
     <url>
-        <loc>https://saud.gq/blog/retroshare-update-2/</loc>
+        <loc>https://saud.wtf/blog/retroshare-update-2/</loc>
         <lastmod>2019-06-23</lastmod>
     </url>
     <url>
-        <loc>https://saud.gq/blog/retroshare-update-3/</loc>
+        <loc>https://saud.wtf/blog/retroshare-update-3/</loc>
         <lastmod>2019-07-24</lastmod>
     </url>
     <url>
-        <loc>https://saud.gq/blog/retroshare-update-4/</loc>
+        <loc>https://saud.wtf/blog/retroshare-update-4/</loc>
         <lastmod>2019-08-25</lastmod>
     </url>
     <url>
-        <loc>https://saud.gq/blog/vim-fuzzy-search/</loc>
+        <loc>https://saud.wtf/blog/vim-fuzzy-search/</loc>
         <lastmod>2021-06-10</lastmod>
     </url>
 </urlset>

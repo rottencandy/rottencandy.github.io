@@ -77,7 +77,7 @@ Only half the vertices required! The shader handles the coloring and shadows. If
 <h2 id="player">Player<a href="#player">#</a>
 </h2>
 <p>The player character/cube/whatever is just a smaller version of the platform. The white light filling it up is calculated in the shader itself, by simply stepping the pixel height with the steps taken:</p>
-<pre data-lang="c" class="language-c "><code class="language-c" data-lang="c">pixelHeight = 1.0 - (aVertexPos.z / height);
+<pre data-lang="c" class="language-c "><code class="language-c" data-lang="c">pixelHeight = 1.0 - (aVertexPos.z &#x2F; height);
 ...
 float light = step(pixelHeight, curStep);
 </code></pre>

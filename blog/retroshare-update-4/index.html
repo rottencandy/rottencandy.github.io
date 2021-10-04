@@ -60,8 +60,8 @@ Made using JavaScript, and the only external library being used is <a href="http
 <h2 id="build-process">Build Process<a href="#build-process">#</a>
 </h2>
 <p>If you look at the <a href="https://github.com/RetroShare/RSNewWebUI">source code</a>, you can see that it is built using <a href="https://doc.qt.io/qt-5/qmake-manual.html"><code>qmake</code></a>, the config file <code>webui.pro</code> executes build scripts in <code>webui-src/make-src</code>.</p>
-<pre><code>webui-src/
-├── make-src/
+<pre><code>webui-src&#x2F;
+├── make-src&#x2F;
 │   ├── build.bat
 │   ├── build.sh
 │   ├── chat.css
@@ -85,24 +85,24 @@ The <code>module.exports</code> object is the only data that can be accessed out
 <h2 id="structure">Structure<a href="#structure">#</a>
 </h2>
 <p>Now that we know how <code>require()</code> and <code>module.exports</code> work, we can look into how the source code functions:</p>
-<pre><code>app/
-├── channels/
+<pre><code>app&#x2F;
+├── channels&#x2F;
 │   └── ...
-├── chat/
+├── chat&#x2F;
 │   └── ...
-├── config/
+├── config&#x2F;
 │   └── ...
-├── files/
+├── files&#x2F;
 │   └── ...
 ├── home.js
 ├── login.js
-├── mail/
+├── mail&#x2F;
 │   └── ...
 ├── main.js
 ├── mithril.js
-├── network/
+├── network&#x2F;
 │   └── ...
-├── people/
+├── people&#x2F;
 │   └── ...
 ├── rswebui.js
 ├── theme.css
@@ -142,7 +142,7 @@ It takes in two parameters: the list of sections, and the base route link of the
 Note that the section link must be the same as it’s name for it to be resolved properly:</p>
 <pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m(widget.SideBar, {
   tabs: tabsList,
-  baseRoute: '/route/',
+  baseRoute: &#x27;&#x2F;route&#x2F;&#x27;,
 });
 </code></pre>
 <figure>
@@ -158,13 +158,13 @@ For additional uniformity, I have been using the <code>&lt;h3&gt;</code> followe
 </figure>
 <p>The <code>progressbar</code> widget is a combination of a <code>&lt;span&gt;</code> tag relatively placed inside a <code>&lt;div&gt;</code> tag using the block-inline display attribute.
 To create the <code>progressbar</code> in mithril, just use:</p>
-<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m('.progressbar', {
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m(&#x27;.progressbar&#x27;, {
   style: {
-    content: rate + '%'
+    content: rate + &#x27;%&#x27;
   }
-}, m('span.progress-status', {
+}, m(&#x27;span.progress-status&#x27;, {
   style: {
-    width: rate + '%'
+    width: rate + &#x27;%&#x27;
   }
 }, rate));
 </code></pre>
@@ -174,9 +174,9 @@ To create the <code>progressbar</code> in mithril, just use:</p>
 </figure>
 <p>And the CSS will handle the rest.</p>
 <p>The <code>tooltip</code> widget can be used to display additional content when the mouse pointer is hovered over it. And can be easily created using:</p>
-<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m('.tooltip', [
-  m('p', 'normally visible content'),
-  m('.tooltiptext', 'content visible when hovered'),
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m(&#x27;.tooltip&#x27;, [
+  m(&#x27;p&#x27;, &#x27;normally visible content&#x27;),
+  m(&#x27;.tooltiptext&#x27;, &#x27;content visible when hovered&#x27;),
 ]);
 </code></pre>
 <figure>
@@ -187,7 +187,7 @@ To create the <code>progressbar</code> in mithril, just use:</p>
 This is also present in the <code>widgets.js</code> file.
 It is made as a mithril component, so can be used normally with the <code>m()</code> selector.
 It also takes in other mithril components as attributes, allowing it to display any given html tag.</p>
-<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">widgets.popupMessage([/* Array of components to render */]);
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">widgets.popupMessage([&#x2F;* Array of components to render *&#x2F;]);
 </code></pre>
 <figure>
   <img src="rs-popup.png" alt="popup" />
@@ -195,12 +195,12 @@ It also takes in other mithril components as attributes, allowing it to display 
 </figure>
 <p>Creating custom input types making use of the <code>&lt;input&gt;</code> tag is incredibly easy in mithril, but may initially be confusing to programmers used to vanilla JavaScript for event handling.
 Normally, to create a JS-controlled input field, you would do something like:</p>
-<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">let text = document.getElementById('input').value;
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">let text = document.getElementById(&#x27;input&#x27;).value;
 </code></pre>
 <p>But mithril components can be controlled very easily by making use of the <code>onchange</code> and <code>oninput</code> event handlers:</p>
-<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m('input[type=text]', {
+<pre data-lang="javascript" class="language-javascript "><code class="language-javascript" data-lang="javascript">m(&#x27;input[type=text]&#x27;, {
   value: text,
-  oninput: (e) => text = e.target.value,
+  oninput: (e) =&gt; text = e.target.value,
 });
 </code></pre>
 <p>And <code>text</code> gets automatically updated with any value the user enters.

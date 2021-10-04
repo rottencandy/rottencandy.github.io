@@ -56,15 +56,15 @@ similar to <code>:grep</code> but more interactive.</p>
 and then it allows narrowing down to desired results by filtering through them.</p>
 <p>I want to search through all files recursively under the currently active directory,
 so we can just <code>cat</code> all the files and pass them to <code>fzf</code>, like:</p>
-<pre data-lang="sh" class="language-sh "><code class="language-sh" data-lang="sh">$ find ./ -exec cat {} \; | fzf
+<pre data-lang="sh" class="language-sh "><code class="language-sh" data-lang="sh">$ find .&#x2F; -exec cat {} \; | fzf
 #(...)
 matched_text # output after fzf selection
 </code></pre>
 <p>But I don't really want to search through all the ignored and hidden files,
 we need a way to exclude them from our output.
 What if we instead use <a href="https://github.com/BurntSushi/ripgrep">ripgrep</a>?</p>
-<pre data-lang="sh" class="language-sh "><code class="language-sh" data-lang="sh">$ cd ~/code/dotfiles
-$ rg --line-number '.*' | fzf
+<pre data-lang="sh" class="language-sh "><code class="language-sh" data-lang="sh">$ cd ~&#x2F;code&#x2F;dotfiles
+$ rg --line-number &#x27;.*&#x27; | fzf
 #(...)
 gitconfig:21:  line-numbers = true
 </code></pre>
@@ -78,18 +78,18 @@ Note that the result uses the format <code>{FILE_PATH}:{LINE_NUMBER}: {MATCHED_T
 </h2>
 <p>When <code>fzf</code> is installed correctly, it comes with a little <a href="https://github.com/junegunn/fzf/blob/master/README-VIM.md">vim wrapper</a> that lets us integrate the command using vimscript.</p>
 <p>The core function that enables this is <code>fzf#run</code>, which takes in the source and provides the result to a sink:</p>
-<pre data-lang="vim" class="language-vim "><code class="language-vim" data-lang="vim">nnoremap <silent> <Leader>s :call fzf#run({
-  \ 'source': 'rg --line-number ''.*''',
-  \ 'sink': function('<sid>sinkFunction'),
-})<CR>
+<pre data-lang="vim" class="language-vim "><code class="language-vim" data-lang="vim">nnoremap &lt;silent&gt; &lt;Leader&gt;s :call fzf#run({
+  \ &#x27;source&#x27;: &#x27;rg --line-number &#x27;&#x27;.*&#x27;&#x27;&#x27;,
+  \ &#x27;sink&#x27;: function(&#x27;&lt;sid&gt;sinkFunction&#x27;),
+})&lt;CR&gt;
 </code></pre>
 <p>This may look intimidating if you're new to vimscript, but it's really simple.
 We create a key mapping which calls <code>fzf#run</code> with the source as <code>rg --line-number ''.*''</code>(The <code>''</code> is just vim's way of escaping quotes inside strings),
 and a sink function <code>sinkFunction</code> that the result is passed to.</p>
 <p>Let's define the sink function to open the file from the provided result:</p>
 <pre data-lang="vim" class="language-vim "><code class="language-vim" data-lang="vim">fun! s:sinkFunction(result)
-  let filePath = split(a:result, ':')
-  exec 'edit +' . l:filePath[1] . ' ' . l:filePath[0]
+  let filePath = split(a:result, &#x27;:&#x27;)
+  exec &#x27;edit +&#x27; . l:filePath[1] . &#x27; &#x27; . l:filePath[0]
 endfun
 </code></pre>
 <p>The file path and line number is extracted from the result by splitting it into multiple strings at the <code>:</code> points.</p>
@@ -105,11 +105,11 @@ I decided to see if I could do more here.</p>
 </h2>
 <p>Fzf has this <code>--preview</code> option, that when supplied with a command, shows it's output in a little window as we go through the results.
 And this works in vim too, we could use this to show a preview of the file that's currently being searched.</p>
-<pre data-lang="vim" class="language-vim "><code class="language-vim" data-lang="vim">nnoremap <silent> <Leader>s :call fzf#run({
-  \ 'source': 'rg --line-number ''.*''',
-  \ 'options': '--delimiter : --preview "bat --color=always {1} -H {2}" --preview-window "+{2}/2"',
-  \ 'sink': function('<sid>sinkFunction'),
-  \ })<CR>
+<pre data-lang="vim" class="language-vim "><code class="language-vim" data-lang="vim">nnoremap &lt;silent&gt; &lt;Leader&gt;s :call fzf#run({
+  \ &#x27;source&#x27;: &#x27;rg --line-number &#x27;&#x27;.*&#x27;&#x27;&#x27;,
+  \ &#x27;options&#x27;: &#x27;--delimiter : --preview &quot;bat --color=always {1} -H {2}&quot; --preview-window &quot;+{2}&#x2F;2&quot;&#x27;,
+  \ &#x27;sink&#x27;: function(&#x27;&lt;sid&gt;sinkFunction&#x27;),
+  \ })&lt;CR&gt;
 </code></pre>
 <p>The <code>fzf#run</code> function also takes in extra <code>options</code> that get passed to <code>fzf</code>,
 and here we use <a href="https://github.com/sharkdp/bat">bat</a> to preview the file in all it's syntax-highlighted glory.</p>
@@ -129,15 +129,15 @@ and just want to immediately jump to a location that pops into my mind.</p>
   if len(a:result) == 0
     return
   endif
-  let filePos = split(a:result, ':')
-  exec 'edit +' . l:filePos[1] . ' ' . l:filePos[0]
+  let filePos = split(a:result, &#x27;:&#x27;)
+  exec &#x27;edit +&#x27; . l:filePos[1] . &#x27; &#x27; . l:filePos[0]
 endfun
 
-nnoremap <silent> <Leader>s :call fzf#run(fzf#wrap({
-  \ 'source': 'rg --line-number ''.*''',
-  \ 'options': '--delimiter : --preview "bat --style=plain --color=always {1} -H {2}" --preview-window "+{2}/2"',
-  \ 'sink': function('<sid>openFileAtLocation'),
-  \ }))<CR>
+nnoremap &lt;silent&gt; &lt;Leader&gt;s :call fzf#run(fzf#wrap({
+  \ &#x27;source&#x27;: &#x27;rg --line-number &#x27;&#x27;.*&#x27;&#x27;&#x27;,
+  \ &#x27;options&#x27;: &#x27;--delimiter : --preview &quot;bat --style=plain --color=always {1} -H {2}&quot; --preview-window &quot;+{2}&#x2F;2&quot;&#x27;,
+  \ &#x27;sink&#x27;: function(&#x27;&lt;sid&gt;openFileAtLocation&#x27;),
+  \ }))&lt;CR&gt;
 </code></pre>
 
 </main>

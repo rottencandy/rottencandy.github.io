@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Saud&#x27;s Blog</title>
+        <link>https://saud.wtf</link>
+        <description>Personal website.</description>
+        <generator>Zola</generator>
+        <language>en</language>
+        <atom:link href="https://saud.wtf/rss.xml" rel="self" type="application/rss+xml"/>
+        <lastBuildDate>Thu, 10 Jun 2021 00:00:00 +0000</lastBuildDate>
+        <item>
+            <title>Quick &amp; dirty project-wide fuzzy search in vim</title>
+            <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
+            <link>https://saud.wtf/blog/vim-fuzzy-search/</link>
+            <guid>https://saud.wtf/blog/vim-fuzzy-search/</guid>
+            <description>&lt;p&gt;The most common method of searching files for text using vim is with the &lt;code&gt;:grep&lt;&#x2F;code&gt; command.
+It conveniently fills up the quickfix list with all files containing matches, allowing easy navigation.
+Moreover, it can be configured with the &lt;code&gt;grepprg&lt;&#x2F;code&gt; option to use any grep program to do the searching.&lt;&#x2F;p&gt;
+&lt;p&gt;But lately, I&#x27;ve developed this habit of sticking &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;junegunn&#x2F;fzf&quot;&gt;fzf&lt;&#x2F;a&gt; into any scripts or aliases I make.
+Fuzzy searching is my guilty pleasure.
+The instant gratification I get fuzzy searching through all possible results,
+along with the immediate visual feedback as I narrow down to desired matches,
+even though it may not always be the fastest&#x2F;most efficient way,
+gives me &lt;em&gt;warm fuzzy feelings&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Naturally, I decided to see if the idea of fuzzy matching would be usable for doing project-wide searches in vim,
+similar to &lt;code&gt;:grep&lt;&#x2F;code&gt; but more interactive.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;basic-fuzzy-searching-on-the-cli&quot;&gt;Basic fuzzy searching on the CLI&lt;a href=&quot;#basic-fuzzy-searching-on-the-cli&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;The way &lt;code&gt;fzf&lt;&#x2F;code&gt; works is by reading all possible matches as input,
+and then it allows narrowing down to desired results by filtering through them.&lt;&#x2F;p&gt;
+&lt;p&gt;I want to search through all files recursively under the currently active directory,
+so we can just &lt;code&gt;cat&lt;&#x2F;code&gt; all the files and pass them to &lt;code&gt;fzf&lt;&#x2F;code&gt;, like:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;$ find .&amp;#x2F; -exec cat {} \; | fzf
+#(...)
+matched_text # output after fzf selection
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;But I don&#x27;t really want to search through all the ignored and hidden files,
+we need a way to exclude them from our output.
+What if we instead use &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;BurntSushi&#x2F;ripgrep&quot;&gt;ripgrep&lt;&#x2F;a&gt;?&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;$ cd ~&amp;#x2F;code&amp;#x2F;dotfiles
+$ rg --line-number &amp;#x27;.*&amp;#x27; | fzf
+#(...)
+gitconfig:21:  line-numbers = true
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This makes it much simpler,
+we match &lt;em&gt;&amp;quot;everything&amp;quot;&lt;&#x2F;em&gt; using &lt;code&gt;.*&lt;&#x2F;code&gt;, and pass it all to &lt;code&gt;fzf&lt;&#x2F;code&gt;.
+Since &lt;code&gt;rg&lt;&#x2F;code&gt; searches recursively by default, we don&#x27;t have to worry about using &lt;code&gt;find&lt;&#x2F;code&gt; either.&lt;&#x2F;p&gt;
+&lt;p&gt;The output also provides the line number, which is enabled using the &lt;code&gt;--line-number&lt;&#x2F;code&gt; option.
+Note that the result uses the format &lt;code&gt;{FILE_PATH}:{LINE_NUMBER}: {MATCHED_TEXT}&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Now let&#x27;s use this in vim.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;using-fzf-with-vim&quot;&gt;Using fzf with vim&lt;a href=&quot;#using-fzf-with-vim&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;When &lt;code&gt;fzf&lt;&#x2F;code&gt; is installed correctly, it comes with a little &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;junegunn&#x2F;fzf&#x2F;blob&#x2F;master&#x2F;README-VIM.md&quot;&gt;vim wrapper&lt;&#x2F;a&gt; that lets us integrate the command using vimscript.&lt;&#x2F;p&gt;
+&lt;p&gt;The core function that enables this is &lt;code&gt;fzf#run&lt;&#x2F;code&gt;, which takes in the source and provides the result to a sink:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;vim&quot; class=&quot;language-vim &quot;&gt;&lt;code class=&quot;language-vim&quot; data-lang=&quot;vim&quot;&gt;nnoremap &amp;lt;silent&amp;gt; &amp;lt;Leader&amp;gt;s :call fzf#run({
+  \ &amp;#x27;source&amp;#x27;: &amp;#x27;rg --line-number &amp;#x27;&amp;#x27;.*&amp;#x27;&amp;#x27;&amp;#x27;,
+  \ &amp;#x27;sink&amp;#x27;: function(&amp;#x27;&amp;lt;sid&amp;gt;sinkFunction&amp;#x27;),
+})&amp;lt;CR&amp;gt;
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This may look intimidating if you&#x27;re new to vimscript, but it&#x27;s really simple.
+We create a key mapping which calls &lt;code&gt;fzf#run&lt;&#x2F;code&gt; with the source as &lt;code&gt;rg --line-number &#x27;&#x27;.*&#x27;&#x27;&lt;&#x2F;code&gt;(The &lt;code&gt;&#x27;&#x27;&lt;&#x2F;code&gt; is just vim&#x27;s way of escaping quotes inside strings),
+and a sink function &lt;code&gt;sinkFunction&lt;&#x2F;code&gt; that the result is passed to.&lt;&#x2F;p&gt;
+&lt;p&gt;Let&#x27;s define the sink function to open the file from the provided result:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;vim&quot; class=&quot;language-vim &quot;&gt;&lt;code class=&quot;language-vim&quot; data-lang=&quot;vim&quot;&gt;fun! s:sinkFunction(result)
+  let filePath = split(a:result, &amp;#x27;:&amp;#x27;)
+  exec &amp;#x27;edit +&amp;#x27; . l:filePath[1] . &amp;#x27; &amp;#x27; . l:filePath[0]
+endfun
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The file path and line number is extracted from the result by splitting it into multiple strings at the &lt;code&gt;:&lt;&#x2F;code&gt; points.&lt;&#x2F;p&gt;
+&lt;p&gt;We then use this to create and run the command to load a file at a given line,
+which is in the format &lt;code&gt;edit +{LINE_NUMBER} {FILE_PATH}&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;And it works!
+The fzf wrapper even seems to handle the case where I use multiple selections and opens multiple files accordingly.&lt;&#x2F;p&gt;
+&lt;p&gt;I honestly wasn&#x27;t expecting it to be that simple.
+And so, as if in a fit of rage due to this anti-climatic moment,
+I decided to see if I could do more here.&lt;&#x2F;p&gt;
+&lt;p&gt;We&#x27;re already wasting so many CPU cycles, why not go a little further and make everything look fancy?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;file-previews&quot;&gt;File previews&lt;a href=&quot;#file-previews&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Fzf has this &lt;code&gt;--preview&lt;&#x2F;code&gt; option, that when supplied with a command, shows it&#x27;s output in a little window as we go through the results.
+And this works in vim too, we could use this to show a preview of the file that&#x27;s currently being searched.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;vim&quot; class=&quot;language-vim &quot;&gt;&lt;code class=&quot;language-vim&quot; data-lang=&quot;vim&quot;&gt;nnoremap &amp;lt;silent&amp;gt; &amp;lt;Leader&amp;gt;s :call fzf#run({
+  \ &amp;#x27;source&amp;#x27;: &amp;#x27;rg --line-number &amp;#x27;&amp;#x27;.*&amp;#x27;&amp;#x27;&amp;#x27;,
+  \ &amp;#x27;options&amp;#x27;: &amp;#x27;--delimiter : --preview &amp;quot;bat --color=always {1} -H {2}&amp;quot; --preview-window &amp;quot;+{2}&amp;#x2F;2&amp;quot;&amp;#x27;,
+  \ &amp;#x27;sink&amp;#x27;: function(&amp;#x27;&amp;lt;sid&amp;gt;sinkFunction&amp;#x27;),
+  \ })&amp;lt;CR&amp;gt;
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The &lt;code&gt;fzf#run&lt;&#x2F;code&gt; function also takes in extra &lt;code&gt;options&lt;&#x2F;code&gt; that get passed to &lt;code&gt;fzf&lt;&#x2F;code&gt;,
+and here we use &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;sharkdp&#x2F;bat&quot;&gt;bat&lt;&#x2F;a&gt; to preview the file in all it&#x27;s syntax-highlighted glory.&lt;&#x2F;p&gt;
+&lt;p&gt;We can also make &lt;code&gt;bat&lt;&#x2F;code&gt; highlight the matching line, and make &lt;code&gt;fzf&lt;&#x2F;code&gt; scroll the preview window to the line.&lt;&#x2F;p&gt;
+&lt;p&gt;The overall result feels really fast and snappy, even on large codebases.
+Here&#x27;s me casually browsing the neovim codebase:
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;vim-fuzzy-search&#x2F;screenshot.png&quot; alt=&quot;Screenshot of the fuzzy searching in action&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;a href=&quot;#conclusion&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;I will probably get bored of this very quickly.
+Largely because &lt;code&gt;fzf&lt;&#x2F;code&gt; has limited support for pattern matching (although the exact-match mode using &lt;code&gt;&#x27;&lt;&#x2F;code&gt; is quite handy),
+and this method lacks the persistence of the quickfix list.&lt;&#x2F;p&gt;
+&lt;p&gt;But this is still something I&#x27;d use when I&#x27;m too lazy to &lt;code&gt;:grep&lt;&#x2F;code&gt;,
+and just want to immediately jump to a location that pops into my mind.&lt;&#x2F;p&gt;
+&lt;p&gt;Here&#x27;s a slightly cleaned up version, if you&#x27;d like to try it:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;vim&quot; class=&quot;language-vim &quot;&gt;&lt;code class=&quot;language-vim&quot; data-lang=&quot;vim&quot;&gt;fun! s:openFileAtLocation(result)
+  if len(a:result) == 0
+    return
+  endif
+  let filePos = split(a:result, &amp;#x27;:&amp;#x27;)
+  exec &amp;#x27;edit +&amp;#x27; . l:filePos[1] . &amp;#x27; &amp;#x27; . l:filePos[0]
+endfun
+
+nnoremap &amp;lt;silent&amp;gt; &amp;lt;Leader&amp;gt;s :call fzf#run(fzf#wrap({
+  \ &amp;#x27;source&amp;#x27;: &amp;#x27;rg --line-number &amp;#x27;&amp;#x27;.*&amp;#x27;&amp;#x27;&amp;#x27;,
+  \ &amp;#x27;options&amp;#x27;: &amp;#x27;--delimiter : --preview &amp;quot;bat --style=plain --color=always {1} -H {2}&amp;quot; --preview-window &amp;quot;+{2}&amp;#x2F;2&amp;quot;&amp;#x27;,
+  \ &amp;#x27;sink&amp;#x27;: function(&amp;#x27;&amp;lt;sid&amp;gt;openFileAtLocation&amp;#x27;),
+  \ }))&amp;lt;CR&amp;gt;
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+</description>
+        </item>
+        <item>
+            <title>Making of FOURFOLD</title>
+            <pubDate>Sat, 10 Oct 2020 00:00:00 +0000</pubDate>
+            <link>https://saud.wtf/blog/fourfold/</link>
+            <guid>https://saud.wtf/blog/fourfold/</guid>
+            <description>&lt;p&gt;FOURFOLD was my entry to the &lt;a href=&quot;https:&#x2F;&#x2F;js13kgames.com&quot;&gt;JS13K&lt;&#x2F;a&gt; games competition, it &lt;a href=&quot;https:&#x2F;&#x2F;2020.js13kgames.com&#x2F;#winners&quot;&gt;ranked&lt;&#x2F;a&gt; way better than my expectations; 7 overall, 4 in mobile category and 16 in WebMonetization category. Along with appearing in top 10 four times at the &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;js13kgames&#x2F;top-games-from-given-criteria-c5066b5fe38d&quot;&gt;individual criteria&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Play it on the &lt;a href=&quot;https:&#x2F;&#x2F;js13kgames.com&#x2F;entries&#x2F;fourfold&quot;&gt;jam page&lt;&#x2F;a&gt; or on &lt;a href=&quot;https:&#x2F;&#x2F;rottencandy.itch.io&#x2F;fourfold&quot;&gt;itch.io&lt;&#x2F;a&gt;.
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;game.png&quot; alt=&quot;Screengrab of the game&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;After being absolutely stumped by what people were pulling off with such a size limit in the past years, I decided it was time I too joined in on the fun.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;idea&quot;&gt;Idea&lt;a href=&quot;#idea&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;I set myself some goals before the jam had started:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Make a puzzle game&lt;&#x2F;li&gt;
+&lt;li&gt;Use WebGL, I&#x27;ve been learning it for some time now but haven&#x27;t made anything noticable with it yet&lt;&#x2F;li&gt;
+&lt;li&gt;Aim for top 115, I mean who doesn&#x27;t like that sweet T-shirt?&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;My standard procedure for generating puzzle game ideas involves binging through &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLc38fcMFcV_vvkHM_MUmyohwuM5oZ5APB&quot;&gt;GMTK&#x27;s Puzzle Design playlist&lt;&#x2F;a&gt;
+followed by roughly sketching out whatever comes to my mind, regardless of whether it makes sense.
+Then I try to look at it all and piece together a core logic, keeping in mind the elasticity of the general idea and room for variations to create interesting puzzle scenarios.&lt;&#x2F;p&gt;
+&lt;p&gt;The theme for this year was &lt;code&gt;404&lt;&#x2F;code&gt;, my first thought was that this theme will generate lots of games involving HTTP packets, to stand out, I should &lt;em&gt;NOT&lt;&#x2F;em&gt; make a game about HTTP packets.
+That made everything rather difficult, because &lt;em&gt;LITERALLY&lt;&#x2F;em&gt; everything that comes to mind when I look at &lt;code&gt;404&lt;&#x2F;code&gt; is HTTP packets!&lt;&#x2F;p&gt;
+&lt;p&gt;It took me about 4 days to settle with a decent idea. I was heavily insipred by games like snakebird, which make you think about every move you make. I also love games with a calm and serene aesthetic, and I tried incorporating some of those elements into the the game.&lt;&#x2F;p&gt;
+&lt;p&gt;That involved getting the player into a rhythm-like state, so that all the focus would be on puzzle solving.
+And that also meant refraining from adding any feature that didn&#x27;t directly complement the core puzzle gameplay.&lt;&#x2F;p&gt;
+&lt;p&gt;I didn&#x27;t want the player to end up not feeling good after playing the game, even if they don&#x27;t complete it.
+So I tried to remove or refine any elements that could be percieved as negative. For example, enemies, game over screens, or a life system.
+Also notice how the player cube almost immediately spawns back at the start upon falling, signifying that losing isn&#x27;t that big of a deal.
+This takes away some of the pressure and maintains a positive atmosphere for the game.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;platforms&quot;&gt;Platforms&lt;a href=&quot;#platforms&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;I first started out with the static red platform, thinking that I&#x27;d add some 2-3 different platforms to breathe variety into the levels, there&#x27;s a lot of possible variations but I refrained from implementing most of them because of my growing concern of code size.
+I regret not adding many interesting ones that I came up with, like platforms that move when stepped on, platforms that push the player to a different direction, and platforms that teleport the player, so many cool level ideas come to mind.
+I may add them in the future, if I ever get motivated enough to turn this into a full game.&lt;&#x2F;p&gt;
+&lt;p&gt;I did however create an &amp;quot;orange&amp;quot; platform, which was like yellow, but had to be stepped on twice before it dissapeared. I scraped it out in the end because it wasn&#x27;t fun and made levels rather mundane.&lt;&#x2F;p&gt;
+&lt;p&gt;The rendering is really straightforward, because the platforms are just standard cubes. And since there is no rotation, I saved some bytes by drawing only the visible part of a cube:
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;platform.png&quot; alt=&quot;Sketch of the visible part of cube&quot; &#x2F;&gt;
+Only half the vertices required! The shader handles the coloring and shadows. If you observe closely, you&#x27;ll notice that the platform color fades out into the background from top to bottom.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;player&quot;&gt;Player&lt;a href=&quot;#player&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;The player character&#x2F;cube&#x2F;whatever is just a smaller version of the platform. The white light filling it up is calculated in the shader itself, by simply stepping the pixel height with the steps taken:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;c&quot; class=&quot;language-c &quot;&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;pixelHeight = 1.0 - (aVertexPos.z &amp;#x2F; height);
+...
+float light = step(pixelHeight, curStep);
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The piano-like sound is made possible thanks to the amazing &lt;a href=&quot;https:&#x2F;&#x2F;keithclark.github.io&#x2F;ZzFXM&quot;&gt;ZzFXM&lt;&#x2F;a&gt; library.&lt;&#x2F;p&gt;
+&lt;p&gt;At first, I wanted the cube to jump instead of sliding around. But I couldn&#x27;t implement it in time.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;levels&quot;&gt;Levels&lt;a href=&quot;#levels&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;The levels are represented as a square grid.
+Square because it makes things much simpler and reduces the code size a lot.&lt;&#x2F;p&gt;
+&lt;p&gt;It probably isn&#x27;t obvious since I haven&#x27;t mentioned this anywhere, but you can easily pan and move the level around by dragging the scene with the cursor.
+I did this because placing the platforms such that the entire level is visible at once proved to be difficult.
+I ended up simply placing the grid starting with one-fourth of the screen from the top left.&lt;&#x2F;p&gt;
+&lt;p&gt;I could have made the scene zoom out according on the grid size, but all the levels seemed to look fine by the end.&lt;&#x2F;p&gt;
+&lt;p&gt;The level data is converted to and stored as a string using a simple &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Run-length_encoding&quot;&gt;RLE&lt;&#x2F;a&gt; algorithm, with a substitution character for every platform type.&lt;&#x2F;p&gt;
+&lt;p&gt;Manually making strings of level is really difficult, so I also planned to make a level editor.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;editor&quot;&gt;Editor&lt;a href=&quot;#editor&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;I didn&#x27;t want to slap in an editor just for the sake of it, but wanted it to be fully fledged and complete.&lt;&#x2F;p&gt;
+&lt;p&gt;It had to be simple and easy to use, while also allowing to quickly create any kind of level.
+I used the editor to create all the levels, which helped me iterate on and improve it.&lt;&#x2F;p&gt;
+&lt;p&gt;The editor without the background. Looks pretty neat actually:
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;editor.png&quot; alt=&quot;Screengrab of the editor&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;The pause &amp;quot;icon&amp;quot; is simply two &lt;code&gt;I&lt;&#x2F;code&gt;s.&lt;&#x2F;li&gt;
+&lt;li&gt;The finish and reset buttons are just unicode symbols.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;ui&quot;&gt;UI&lt;a href=&quot;#ui&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;I admit I went overboard with the UI, something not very common in JS13k entries, but it acts as a bridge for players to get to the gameplay, and is important to get right.&lt;&#x2F;p&gt;
+&lt;p&gt;Many UX philosophies state that a good interface is invisible to users.
+It should get them to the important bits as quickly as possible and stay out of the way, but still be within reach.
+I ended up creating a mini-framework which could almost be used in itself.&lt;&#x2F;p&gt;
+&lt;p&gt;Initially, I started creating the UI inside the game loop itself, it&#x27;s possible but can be clunky and makes the code very awkward, so I switched to using HTML for the UI.
+Moreover, HTML is presently the most flexible UI toolkit on the planet!
+There is really no reason to not use it when it&#x27;s available right there.&lt;&#x2F;p&gt;
+&lt;p&gt;There&#x27;s no way I could afford to throw in a font file, so I rolled with a web-safe font.
+Looking at &lt;a href=&quot;https:&#x2F;&#x2F;www.cssfontstack.com&quot;&gt;cssfontsack.com&lt;&#x2F;a&gt;, I picked &lt;code&gt;Trebuchet&lt;&#x2F;code&gt;, it is sans-serif and seemed widely available.&lt;&#x2F;p&gt;
+&lt;p&gt;A very simple way to make default fonts look better is to use a smaller &lt;code&gt;font-width&lt;&#x2F;code&gt;. Thin fonts really tend to stand out:
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;fonts.png&quot; alt=&quot;A comparision of fonts&quot; &#x2F;&gt;
+All it takes is a single line of CSS:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;css&quot; class=&quot;language-css &quot;&gt;&lt;code class=&quot;language-css&quot; data-lang=&quot;css&quot;&gt;font: 100 2.5rem Trebuchet, sans-serif;
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;web-monetization&quot;&gt;Web monetization&lt;a href=&quot;#web-monetization&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;webmonetization.org&#x2F;&quot;&gt;Web monetization&lt;&#x2F;a&gt; is a really cool protocol that I hope becomes more mainstream.&lt;&#x2F;p&gt;
+&lt;p&gt;I was careful to not take the game to pay-to-win territory.
+Changing the background is a good idea, gives the ability to change the overall look and feel without affecting gameplay.&lt;&#x2F;p&gt;
+&lt;p&gt;The second exclusive feature is the yellow platform in the level editor.
+And would act as a nice incentive to paid users.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;backgrounds&quot;&gt;Backgrounds&lt;a href=&quot;#backgrounds&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;The backgrounds are made purely out of shaders. I&#x27;m quite happy that all game assets are generated using code.&lt;&#x2F;p&gt;
+&lt;p&gt;I&#x27;m very new to shader programming, but I think being able to create complex objects using distance fields is beautiful.
+I&#x27;ll probably write a separate post explaining the shaders in detail, but here&#x27;s the general summary:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Morning:&lt;&#x2F;strong&gt;
+I was looking to achieve the look of a backdrop with mountains (a friend told me they look more like clouds).
+The light at the top-right is a simple circle SDF, and the mountains are made using sine functions.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Night:&lt;&#x2F;strong&gt;
+A starry night-sky (the friend told me they look like fireflies, whatever floats your boat I guess).
+It was simply my half-assed implementation of &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=rvDo9LvfoVE&quot;&gt;this cool tutorial&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Retrowave:&lt;&#x2F;strong&gt;
+Coil exclusive theme. The sun is again a circle SDF, and the moving grid lines is a surface bent using normalized Y values.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Abstract:&lt;&#x2F;strong&gt;
+Another Coil exclusive theme. More sine waves. I feel that I should&#x27;ve done more here.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;compression-bundling&quot;&gt;Compression &amp;amp; bundling&lt;a href=&quot;#compression-bundling&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;I tend to not worry much about size until I&#x27;ve used up at least 60-70% of the limit.
+Having managed to finish everything inside the 13 kilobytes, I did not have to worry about using whacky compression techniques and was able to largely stay away from JS dark magic.&lt;&#x2F;p&gt;
+&lt;p&gt;I used the awesome &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;evanw&#x2F;esbuild&quot;&gt;esbuild&lt;&#x2F;a&gt; for bundling and minification, this lightning-fast tool absolutely blows away all other JS-based bundlers by a very large margin in speed.
+I&#x27;m obsessed with it! The web development ecosystem desperately needs more such tools in my opinion.&lt;&#x2F;p&gt;
+&lt;p&gt;Compression is done with good &#x27;ol &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;LuaDist&#x2F;zip&quot;&gt;zip&lt;&#x2F;a&gt;, turning on all the options for maximum compression.&lt;&#x2F;p&gt;
+&lt;p&gt;Anyway, here&#x27;s the obligatory &amp;quot;All the code in a single image&amp;quot;:
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;code.png&quot; alt=&quot;Screenshot of minified code&quot; &#x2F;&gt;
+Along with that, there&#x27;s a tiny amount of HTML required to setup the canvas, along with a bit of CSS sprinkled in for the UI.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;takeaways&quot;&gt;Takeaways&lt;a href=&quot;#takeaways&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Some things that I learnt along the way, and stuff that seemed important to me. Especially in competitions like these.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;browser-support&quot;&gt;Browser support:&lt;a href=&quot;#browser-support&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;I know the rules say targeting any one browser is enough.
+But what are the odds that a random person would: a) notice their current browser isn&#x27;t running the game properly, b) copy the url, c) open a new browser, and d) paste it to start playing?&lt;&#x2F;p&gt;
+&lt;p&gt;That is a lot of effort expected from the user&#x27;s side.
+And all that is assuming they have another browser installed! (You better pray they don&#x27;t end up opening IE)&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;start-simple&quot;&gt;Start simple:&lt;a href=&quot;#start-simple&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;Starting with a simple game idea means you can prototype it quickly, see if it&#x27;s fun and expand as you go.
+Compare that to if you started with a rather complex idea, took a while to get the core mechanics working, and then find out that it&#x27;s not as fun as you hoped it would be.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;create-a-playable-prototype-first&quot;&gt;Create a playable prototype first:&lt;a href=&quot;#create-a-playable-prototype-first&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;This builds on the previous point. Finishing a fully runnable prototpe first and then iterating on that is somehting I find extremely helpful in everything I build.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;a href=&quot;#conclusion&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Although there were things I could have done better, I&#x27;m pretty satisfied with the overall result.
+And I&#x27;m glad I finished it on time.&lt;&#x2F;p&gt;
+&lt;p&gt;Most importantly, I had a lot of fun making the game. Which is all I cared about.
+And the overwhelming amount of positive feedback from the JS13k community and everyone who played has gone a long way in boosting my morale and inspired me to make more games.
+I will surely participate again next year.&lt;&#x2F;p&gt;
+</description>
+        </item>
+        <item>
+            <title>Web Interface for Retroshare - Final Update</title>
+            <pubDate>Sun, 25 Aug 2019 00:00:00 +0000</pubDate>
+            <link>https://saud.wtf/blog/retroshare-update-4/</link>
+            <guid>https://saud.wtf/blog/retroshare-update-4/</guid>
+            <description>&lt;blockquote&gt;
+&lt;p&gt;This is a mirror of a &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&#x2F;2019&#x2F;08&#x2F;25&#x2F;retroshare-web-interface-final-update&#x2F;&quot;&gt;post&lt;&#x2F;a&gt; I wrote on the &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&quot;&gt;Freifunk blog&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;The GSoC program is about to finish, and this will be my last GSoC-related blog post for Retroshare’s new web interface.&lt;&#x2F;p&gt;
+&lt;p&gt;I will use this blog to provide an overview of how the app works, all my work done during this period, features, completed milestones, what couldn’t be completed, and future roadmap.
+I will also explain and document the code structure in the hopes that potential contributors will find it easy to get started.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;The source code is present here: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;And my fork over here: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;rottencandy&#x2F;RSNewWebUI&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;rottencandy&#x2F;RSNewWebUI&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;If you want to see the work I have done exclusively during GSoC, it is all in a single Pull Request: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&#x2F;pull&#x2F;1&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&#x2F;pull&#x2F;1&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;a href=&quot;#overview&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;The purpose is very simple; A web-app that can be used to manage your Retroshare node, interact with friend nodes, and make use of Retroshare’s features.
+In other words, an alternative to the Qt-based interface of the client app.&lt;&#x2F;p&gt;
+&lt;p&gt;This is made possible through the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RetroShare&#x2F;tree&#x2F;master&#x2F;jsonapi-generator&quot;&gt;JSON API&lt;&#x2F;a&gt; provided by Retroshare, which allows everyone to utilize the power of Retroshare’s technology to create their own services, interfaces, or even build apps on top of Retroshare.&lt;&#x2F;p&gt;
+&lt;p&gt;The web interface itself works in a pretty straightforward manner, making use of modern browsers to act as a front end for the Retroshare platform and it’s services.
+Made using JavaScript, and the only external library being used is &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;&quot;&gt;Mithril&lt;&#x2F;a&gt;, which is a very fast and lightweight framework for building single page web applications.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;build-process&quot;&gt;Build Process&lt;a href=&quot;#build-process&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;If you look at the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&quot;&gt;source code&lt;&#x2F;a&gt;, you can see that it is built using &lt;a href=&quot;https:&#x2F;&#x2F;doc.qt.io&#x2F;qt-5&#x2F;qmake-manual.html&quot;&gt;&lt;code&gt;qmake&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, the config file &lt;code&gt;webui.pro&lt;&#x2F;code&gt; executes build scripts in &lt;code&gt;webui-src&#x2F;make-src&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;pre&gt;&lt;code&gt;webui-src&amp;#x2F;
+├── make-src&amp;#x2F;
+│   ├── build.bat
+│   ├── build.sh
+│   ├── chat.css
+│   ├── init.bat
+│   ├── init.sh
+│   ├── main.css
+│   ├── readme.md
+│   └── template.js
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The build scripts in &lt;code&gt;webui-src&#x2F;make-src&lt;&#x2F;code&gt; (most notably &lt;code&gt;build.sh&lt;&#x2F;code&gt;) iterate over all files from the source directory(&lt;code&gt;webui-src&#x2F;app&lt;&#x2F;code&gt;), copying files into their respective destinations.&lt;&#x2F;p&gt;
+&lt;p&gt;All JavaScript files are compiled into &lt;code&gt;app.js&lt;&#x2F;code&gt; and CSS files into &lt;code&gt;app.css&lt;&#x2F;code&gt;, these compiled files are put into the destination directory which is &lt;code&gt;webui&lt;&#x2F;code&gt;.
+The build scripts also copy all the static files, from &lt;code&gt;webui-src&#x2F;assets&lt;&#x2F;code&gt; over to the destination directory, maintaining their directory hierarchy.
+Static files are the ones that do not require any modification in order to be used, like the HTML, font files, some CSS styles, and so on.&lt;&#x2F;p&gt;
+&lt;p&gt;Another important aspect of the build process is how it compiles all the JavaScript files into a single file.
+Since CSS is simply a set of rules without any structure, the output file can be built simply by appending all the source &lt;code&gt;.css&lt;&#x2F;code&gt; files together, JavaScript however doesn’t work that way:&lt;&#x2F;p&gt;
+&lt;p&gt;You may have noticed another file in &lt;code&gt;make-src&lt;&#x2F;code&gt; called &lt;code&gt;template.js&lt;&#x2F;code&gt;.
+This file is used to create an entry point for the JavaScript files. It can be thought of as a kind of polyfill for &lt;a href=&quot;https:&#x2F;&#x2F;requirejs.org&#x2F;&quot;&gt;require&lt;&#x2F;a&gt;.
+What this essentially does is, take all the &lt;code&gt;.js&lt;&#x2F;code&gt; source files and store them using objects in such a way that they are isolated from each other, and then enable interaction between them through exporting objects.&lt;&#x2F;p&gt;
+&lt;p&gt;To make a module’s components public, we have to refer them in the &lt;code&gt;module.exports&lt;&#x2F;code&gt; object, and we can use them inside other modules by importing them using the &lt;code&gt;require()&lt;&#x2F;code&gt; method.&lt;&#x2F;br&gt;
+The &lt;code&gt;module.exports&lt;&#x2F;code&gt; object is the only data that can be accessed outside of the module.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;structure&quot;&gt;Structure&lt;a href=&quot;#structure&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Now that we know how &lt;code&gt;require()&lt;&#x2F;code&gt; and &lt;code&gt;module.exports&lt;&#x2F;code&gt; work, we can look into how the source code functions:&lt;&#x2F;p&gt;
+&lt;pre&gt;&lt;code&gt;app&amp;#x2F;
+├── channels&amp;#x2F;
+│   └── ...
+├── chat&amp;#x2F;
+│   └── ...
+├── config&amp;#x2F;
+│   └── ...
+├── files&amp;#x2F;
+│   └── ...
+├── home.js
+├── login.js
+├── mail&amp;#x2F;
+│   └── ...
+├── main.js
+├── mithril.js
+├── network&amp;#x2F;
+│   └── ...
+├── people&amp;#x2F;
+│   └── ...
+├── rswebui.js
+├── theme.css
+└── widgets.js
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The source files are all in &lt;code&gt;webui-src&#x2F;app&lt;&#x2F;code&gt;.
+I have tried to implement a structure loosely based on the &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Model%E2%80%93view%E2%80%93controller&quot;&gt;MVC design pattern&lt;&#x2F;a&gt;.&lt;&#x2F;br&gt;
+Aside from separating data and views as objects and components, it makes intuitive use of &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;components.html&quot;&gt;Mithril components&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;route.html&quot;&gt;routing&lt;&#x2F;a&gt; concepts.&lt;&#x2F;p&gt;
+&lt;p&gt;Each folder contains the views and models for a single tab.
+All tabs have their own &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;route.html#routeresolver&quot;&gt;route resolver&lt;&#x2F;a&gt; that takes in the route parameters and resolves them to return the correct views for rendering.&lt;&#x2F;p&gt;
+&lt;p&gt;The entry point of all tabs happens in the resolver file, which also defines the layout of that tab. I will explain layout types shortly.&lt;&#x2F;p&gt;
+&lt;p&gt;Note how the file names consist of their respective tab names too.
+This is not just for convention, our &lt;code&gt;require&lt;&#x2F;code&gt; polyfill does not yet have the concept of directory structure, any file present in any directory and may be imported by using only it’s name.
+This causes issues when accessing files having same names, which is why tab name supersedes the file name.
+It is important to have unique names for all files.&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;code&gt;main.js&lt;&#x2F;code&gt; file contains mithril’s &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;route.html#signature&quot;&gt;m.route&lt;&#x2F;a&gt;, that defines the routing table and allows all navigation on the app.
+It detects whether the login keys have been verified and upon failing, reroutes to the login page using the &lt;code&gt;onSuccess()&lt;&#x2F;code&gt; callback.&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;code&gt;rswebui.js&lt;&#x2F;code&gt; contains methods that act as the bridge between the web interface and the Retroshare client.
+Mainly, abstracting the API calls and managing &lt;code&gt;async&lt;&#x2F;code&gt; background tasks.&lt;&#x2F;p&gt;
+&lt;p&gt;In a &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&#x2F;2019&#x2F;07&#x2F;22&#x2F;web-interface-for-retroshare-update-2&#x2F;&quot;&gt;previous post&lt;&#x2F;a&gt;, I mentioned that I did a lot of reading on &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;User_interface_design&quot;&gt;UI&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;User_experience_design&quot;&gt;UX&lt;&#x2F;a&gt; design, highlighting how it shaped the look and feel of the web interface.&lt;&#x2F;br&gt;
+After learning the importance of consistency when studying &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Interaction_design&quot;&gt;interaction design&lt;&#x2F;a&gt;, I set out to make the interface more consistent.&lt;&#x2F;p&gt;
+&lt;p&gt;In a nutshell, consistency refers to having uniformity in the UI, a form of repetition such that an action becomes predictable and intuitive to the user.&lt;&#x2F;p&gt;
+&lt;p&gt;It can easily be achieved by having a predefined set of rules on how the UI should behave when interacted with, and the best way to do this is to make a set of reusable components.
+And since this is about the UI and visuals, it has more to do with CSS than JavaScript. Most of the layout rules are defined in &lt;code&gt;theme.css&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;The CSS class that houses all other widgets is the &lt;code&gt;tab-page&lt;&#x2F;code&gt; class.
+It’s the one containing all the elements under the &lt;code&gt;navbar&lt;&#x2F;code&gt;.
+All top level tab layouts use this and extend upon it.
+It can hold both full and half-width widgets, and position them according to the space taken by each.&lt;&#x2F;p&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;rs-page.png&quot; alt=&quot;Blank layout&quot; &#x2F;&gt;
+  &lt;figcaption&gt;The default blank layout created by the tab-page class.&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;The next is the &lt;code&gt;sidebar&lt;&#x2F;code&gt; class, which defines the sidebar on the left of some tabs, allowing to choose sub sections within the tab.
+It must be used when there are multiple sections but are logically grouped inside the same tab.
+Since this is a very commonly used widget, I have put this inside &lt;code&gt;widgets.js&lt;&#x2F;code&gt;, a file that contains a collection of the most used components, so that it is easily available everywhere.
+It takes in two parameters: the list of sections, and the base route link of the tab.
+Note that the section link must be the same as it’s name for it to be resolved properly:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;javascript&quot; class=&quot;language-javascript &quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;m(widget.SideBar, {
+  tabs: tabsList,
+  baseRoute: &amp;#x27;&amp;#x2F;route&amp;#x2F;&amp;#x27;,
+});
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;rs-sidebar.png&quot; alt=&quot;Sidebar&quot; &#x2F;&gt;
+  &lt;figcaption&gt;sidebar class used in the config tab.&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;The &lt;code&gt;widget&lt;&#x2F;code&gt; class is used as a preliminary frame for displaying small groups of input types together.
+For consistency, a directly interactable input must never be shown directly inside tab-page, but must be inside at least one &lt;code&gt;widget&lt;&#x2F;code&gt; frame.
+For additional uniformity, I have been using the &lt;code&gt;&amp;lt;h3&amp;gt;&lt;&#x2F;code&gt; followed by the &lt;code&gt;&amp;lt;hr&amp;gt;&lt;&#x2F;code&gt; tags as the immediately following elements to display and categorize a frame’s contents.&lt;&#x2F;p&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;rs-widget.png&quot; alt=&quot;widget&quot; &#x2F;&gt;
+  &lt;figcaption&gt;A widget being used to create the interface for adding certificates.&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;The &lt;code&gt;progressbar&lt;&#x2F;code&gt; widget is a combination of a &lt;code&gt;&amp;lt;span&amp;gt;&lt;&#x2F;code&gt; tag relatively placed inside a &lt;code&gt;&amp;lt;div&amp;gt;&lt;&#x2F;code&gt; tag using the block-inline display attribute.
+To create the &lt;code&gt;progressbar&lt;&#x2F;code&gt; in mithril, just use:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;javascript&quot; class=&quot;language-javascript &quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;m(&amp;#x27;.progressbar&amp;#x27;, {
+  style: {
+    content: rate + &amp;#x27;%&amp;#x27;
+  }
+}, m(&amp;#x27;span.progress-status&amp;#x27;, {
+  style: {
+    width: rate + &amp;#x27;%&amp;#x27;
+  }
+}, rate));
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;rs-progress.png&quot; alt=&quot;progress bar&quot; &#x2F;&gt;
+  &lt;figcaption&gt;progressbars used in files tab.&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;And the CSS will handle the rest.&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;code&gt;tooltip&lt;&#x2F;code&gt; widget can be used to display additional content when the mouse pointer is hovered over it. And can be easily created using:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;javascript&quot; class=&quot;language-javascript &quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;m(&amp;#x27;.tooltip&amp;#x27;, [
+  m(&amp;#x27;p&amp;#x27;, &amp;#x27;normally visible content&amp;#x27;),
+  m(&amp;#x27;.tooltiptext&amp;#x27;, &amp;#x27;content visible when hovered&amp;#x27;),
+]);
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;rs-tooltip.png&quot; alt=&quot;tooltip&quot; &#x2F;&gt;
+  &lt;figcaption&gt;Example use of tooltip.&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;A modal or popup box can be used to display content which might be triggered by a user’s action, or can display information that requires immediate attention of the user.
+This is also present in the &lt;code&gt;widgets.js&lt;&#x2F;code&gt; file.
+It is made as a mithril component, so can be used normally with the &lt;code&gt;m()&lt;&#x2F;code&gt; selector.
+It also takes in other mithril components as attributes, allowing it to display any given html tag.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;javascript&quot; class=&quot;language-javascript &quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;widgets.popupMessage([&amp;#x2F;* Array of components to render *&amp;#x2F;]);
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;rs-popup.png&quot; alt=&quot;popup&quot; &#x2F;&gt;
+  &lt;figcaption&gt;The popup view used in files tab.&lt;&#x2F;figcaption&gt;
+&lt;&#x2F;figure&gt;
+&lt;p&gt;Creating custom input types making use of the &lt;code&gt;&amp;lt;input&amp;gt;&lt;&#x2F;code&gt; tag is incredibly easy in mithril, but may initially be confusing to programmers used to vanilla JavaScript for event handling.
+Normally, to create a JS-controlled input field, you would do something like:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;javascript&quot; class=&quot;language-javascript &quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;let text = document.getElementById(&amp;#x27;input&amp;#x27;).value;
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;But mithril components can be controlled very easily by making use of the &lt;code&gt;onchange&lt;&#x2F;code&gt; and &lt;code&gt;oninput&lt;&#x2F;code&gt; event handlers:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;javascript&quot; class=&quot;language-javascript &quot;&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;m(&amp;#x27;input[type=text]&amp;#x27;, {
+  value: text,
+  oninput: (e) =&amp;gt; text = e.target.value,
+});
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;And &lt;code&gt;text&lt;&#x2F;code&gt; gets automatically updated with any value the user enters.
+Use &lt;code&gt;oninput&lt;&#x2F;code&gt; to get value after all the text is entered, and &lt;code&gt;onchange&lt;&#x2F;code&gt; for more finer control, which is fired every time a button is pressed.
+This method can be used with any input type like text, number, radio, checkbox, etc. and can be made to run any function, allowing for huge flexibility and control.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;features&quot;&gt;Features&lt;a href=&quot;#features&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;All the features and milestones that were successfully completed:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Get your certificate, add new friends by copying in their certificates.&lt;&#x2F;li&gt;
+&lt;li&gt;View, manage your identities and get info about friend identities.&lt;&#x2F;li&gt;
+&lt;li&gt;View and manage all your friend nodes and each of their locations, and basic info about them.&lt;&#x2F;li&gt;
+&lt;li&gt;Get info about your upload&#x2F;download files and manage them, add new downloads through links.&lt;&#x2F;li&gt;
+&lt;li&gt;Check all your mails.&lt;&#x2F;li&gt;
+&lt;li&gt;View info about subscribed chat lobbies and publicly available lobbies.&lt;&#x2F;li&gt;
+&lt;li&gt;Change various configuration options of your Retroshare node such as network limits, file locations, default behavior, and such.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;roadmap&quot;&gt;Roadmap&lt;a href=&quot;#roadmap&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Retroshare has a huge amount of features, and unfortunately this period wasn’t enough for me to cover all of them into the web interface.
+I plan on implementing the incomplete tabs and then extending the app with new functionality:&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;turtle-search&quot;&gt;Turtle search:&lt;a href=&quot;#turtle-search&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;As my mentor Cyril told me, this feature is very important since it makes it very easy to find and download new files, and is one of the features making use of stream data from the API.&lt;&#x2F;br&gt;
+Getting stream data has been a problem due to &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Cross-origin_resource_sharing&quot;&gt;CORS&lt;&#x2F;a&gt; implemented on browsers, which is the reason this feature couldn’t be finished. I am constantly looking for a viable solution and will immediately finish implementing this when I find one.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;sending-mail&quot;&gt;Sending mail:&lt;a href=&quot;#sending-mail&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;The web interface can only read mails for now, and it would be very nice to be able to send mails too.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;forums&quot;&gt;Forums:&lt;a href=&quot;#forums&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;I have already started work on the forums tab, and will finish it soon.
+This will allow users to interact with and manage forums entirely from inside the web interface.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;channels&quot;&gt;Channels:&lt;a href=&quot;#channels&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;Similarly, I am also working on channels. Another nice feature to have on the Web UI.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;build-process-1&quot;&gt;Build Process:&lt;a href=&quot;#build-process-1&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;As shown above, the current build process is very barebones, and the &lt;code&gt;require&lt;&#x2F;code&gt; polyfill has no concept of directory hierarchy.
+This will eventually cause issues as the app grows.
+We need to upgrade the build tools, or find a new one.
+I think the most important point to keep in mind if choosing to go with a new one, is that the user should not have to install any additional dependencies.&lt;&#x2F;p&gt;
+&lt;p&gt;That’s about it.
+I encourage everyone to try out the app, it is very easy to install the web interface.
+There are even simple installation instructions on the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&quot;&gt;source page&lt;&#x2F;a&gt;! Feel free to get in touch if you have any suggestions or queries.
+You can generally find me lurking in the Developer forums in Retroshare.&lt;&#x2F;p&gt;
+&lt;p&gt;Many thanks to Google, and the amazing Freifunk community, especially my mentors, for giving me this opportunity.
+This has been a wonderful time for me, I learned a lot of new things that would help me contribute more towards free and open software.&lt;&#x2F;p&gt;
+</description>
+        </item>
+        <item>
+            <title>Web Interface for Retroshare - Update 2</title>
+            <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+            <link>https://saud.wtf/blog/retroshare-update-3/</link>
+            <guid>https://saud.wtf/blog/retroshare-update-3/</guid>
+            <description>&lt;blockquote&gt;
+&lt;p&gt;This is a mirror of a &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&#x2F;2019&#x2F;07&#x2F;22&#x2F;web-interface-for-retroshare-update-2&#x2F;&quot;&gt;post&lt;&#x2F;a&gt; I wrote on the &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&quot;&gt;Freifunk blog&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-login.jpg&quot; alt=&quot;Login page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I Realized that the visual appearance of the application felt very bland and uninteresting, so I decided to shift some of my focus to the design and visual aspect of the UI.
+I did plenty of reading about UI&#x2F;UX design principles and modern best practices during this time.
+And looks like it turned out pretty well, and is definitely a good improvement from the &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&#x2F;2019&#x2F;06&#x2F;23&#x2F;web-interface-for-retroshare-update-1&#x2F;&quot;&gt;previous&lt;&#x2F;a&gt; appearance.
+Also, since this is my first attempt at doing professional-level UX design, there is probably room for improvement, so feedback and suggestions are always welcome.&lt;&#x2F;p&gt;
+&lt;p&gt;The general theme has been redone from scratch. I chose this soft blue color palette by taking inspiration from the main app’s look:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-home.jpg&quot; alt=&quot;Home page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The home tab, along with displaying the user certificate, now also allows to add friends by using their certificates.
+It is possible to add friends by copying the certificate contents, dragging and dropping the file, or simply selecting it from the file manager.&lt;&#x2F;p&gt;
+&lt;p&gt;Implemented modal messages within the browser that can be used as a popup dialogue box to display any kind of information (here showing information extracted from a Retroshare certificate):&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-modal.jpg&quot; alt=&quot;Modal&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;As you can see, the navbar has also been revamped.
+And the best thing about it? Icons! I along with my mentors agreed on using the &lt;a href=&quot;https:&#x2F;&#x2F;fontawesome.com&#x2F;&quot;&gt;Font Awesome&lt;&#x2F;a&gt; icon library, which is open source (licensed with a combination of MIT, CC 4.0 &amp;amp; OFL 1.1 licenses).
+I can now utilize icons across the whole app.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-nav.jpg&quot; alt=&quot;Nav bar&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The downloads tab has also been redesigned.
+Now showing all downloads in a slightly different way.
+This layout was chosen with extensibility in mind, it can easily be extended to contain a additional file-related settings and chunk views by having an expandable options box for each file.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-dl.jpg&quot; alt=&quot;Downloads page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The config tab can now be used to change a lot of the setting options similar to the main app.
+Network, node, services, files and people sections from the app have been implemented.
+I will shortly finish the remaining sections too.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-config-1.jpg&quot; alt=&quot;Config page 1&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-config-2.jpg&quot; alt=&quot;Home page 2&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Also notice the tooltip icon. Which when hovered on, gives a brief description about the option. Just like in Retroshare:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-tooltip.jpg&quot; alt=&quot;Tooltip&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;next-steps&quot;&gt;Next Steps&lt;a href=&quot;#next-steps&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Now that the design is steadily making way for a more detailed and specialized variety of widgets and components, I am working on creating tabs for Network, People, Chats, Mail, Channels &amp;amp; Forums so that the Web Interface can finally become a fully usable alternative to the main client app.&lt;&#x2F;p&gt;
+&lt;p&gt;You can try out the Web Interface by cloning it from the repository: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&lt;&#x2F;a&gt;, and my fork: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;rottencandy&#x2F;RSNewWebUI&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;rottencandy&#x2F;RSNewWebUI&lt;&#x2F;a&gt;.
+Again, I am always happy to receive feedback and suggestions for improving the Web Interface.&lt;&#x2F;p&gt;
+</description>
+        </item>
+        <item>
+            <title>Web Interface for Retroshare - Update 1</title>
+            <pubDate>Sun, 23 Jun 2019 00:00:00 +0000</pubDate>
+            <link>https://saud.wtf/blog/retroshare-update-2/</link>
+            <guid>https://saud.wtf/blog/retroshare-update-2/</guid>
+            <description>&lt;blockquote&gt;
+&lt;p&gt;This is a mirror of a &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&#x2F;2019&#x2F;06&#x2F;23&#x2F;web-interface-for-retroshare-update-1&#x2F;&quot;&gt;post&lt;&#x2F;a&gt; I wrote on the &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&quot;&gt;Freifunk blog&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Since the &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&#x2F;2019&#x2F;05&#x2F;23&#x2F;a-new-web-interface-for-retroshare&#x2F;&quot;&gt;first post&lt;&#x2F;a&gt;, there has been quite a lot of progress on development of the new Web Interface for Retroshare.&lt;&#x2F;p&gt;
+&lt;p&gt;As the build process is not using any JavaScript-specific tools, I spent a lot of time making sure that the development process was made as streamlined as possible.
+All the components are logically isolated and functionality moved to their relevant places.
+Using &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;&quot;&gt;mithril&lt;&#x2F;a&gt; also helped a lot, which has this concept of &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;components.html&quot;&gt;components&lt;&#x2F;a&gt;, a mechanism to encapsulate different parts of views.
+Which massively helps in project organization and code reuse.&lt;&#x2F;p&gt;
+&lt;p&gt;One more important feature which was completed is automatic data refresh and redrawing of views.
+I decided to use a combination of mithril’s &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;lifecycle-methods.html&quot;&gt;lifecycle methods&lt;&#x2F;a&gt; and JavaScript’s browser &lt;code&gt;setTimeout&lt;&#x2F;code&gt; method that can be used to create background tasks which when attached to their respective components, will periodically fetch and refresh data.
+The background task gets activated whenever a component’s view is rendered and gets killed when a component goes off of display.
+Mithril also has it’s own &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;autoredraw.html&quot;&gt;auto-redraw&lt;&#x2F;a&gt; system which refreshes views when a component’s event handlers are called.
+But it does not refresh when component attributes are updated, or when raw promises are resolved.&lt;&#x2F;p&gt;
+&lt;p&gt;Here are a few screenshots displaying the new UI style:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-2&#x2F;rs-login.png&quot; alt=&quot;Login page&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-2&#x2F;rs-home.png&quot; alt=&quot;Home page&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-2&#x2F;rs-dloads.png&quot; alt=&quot;Downloads page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;next-steps&quot;&gt;Next Steps&lt;a href=&quot;#next-steps&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Along with the goals displayed in the first post, these will be given a higher priority for completion during the coming phase leading up to the next evaluation:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Node panel in config tab for handling most(if not all) network settings like node information, Net mode, NAT, Download limits, ports, etc.&lt;&#x2F;li&gt;
+&lt;li&gt;Shares panel showing shared files, allowing to edit them, set view permissions, among other options.&lt;&#x2F;li&gt;
+&lt;li&gt;Peers tab to display connected peers and set their reputations.&lt;&#x2F;li&gt;
+&lt;li&gt;Modify the main Retroshare client to enable&#x2F;disable the WebUI.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</description>
+        </item>
+        <item>
+            <title>A new Web Interface for Retroshare</title>
+            <pubDate>Thu, 23 May 2019 00:00:00 +0000</pubDate>
+            <link>https://saud.wtf/blog/a-new-web-interface-for-retroshare/</link>
+            <guid>https://saud.wtf/blog/a-new-web-interface-for-retroshare/</guid>
+            <description>&lt;blockquote&gt;
+&lt;p&gt;This is a mirror of a &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&#x2F;2019&#x2F;05&#x2F;23&#x2F;a-new-web-interface-for-retroshare&quot;&gt;post&lt;&#x2F;a&gt; I wrote on the &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&quot;&gt;Freifunk blog&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;The Retroshare communication platform already has a preliminary web interface.
+But it is severely limited, supports only the basic of interactions with the client, and does not have the nice design and beautiful visual interface that the modern web platform makes possible.
+This GSoC project will be about creating an entirely new web interface for Retroshare using it’s JSON API to handle all communication between the WebUI and the client.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;about-me&quot;&gt;About Me&lt;a href=&quot;#about-me&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;My name is Saud, I’m a third-year undergraduate student in Computer Science at Alliance University, Bangalore, India. This is my first time participating as a student in GSoC as well as my first time being involved in the Freifunk community.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;project-breifing&quot;&gt;Project breifing&lt;a href=&quot;#project-breifing&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;The Web Interface is planned to be made in such a way that all communication with the client happens through the JSON API. As such, It will be made using JavaScript.&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&quot;&gt;Mithril&lt;&#x2F;a&gt; web framework has been chosen chosen for designing the front-end as well as handling the API calls.
+Mithril is a very lightweight and fast client-side framework and is especially used for building single-page applications.
+It also provides neatly integrated and customizable XHR capabilities out of the box.&lt;&#x2F;p&gt;
+&lt;p&gt;The old Web UI communicates with the client app entirely through the deprecated libresapi.
+The new UI will instead be using the JSON API for communication.
+The JSON API has already been implemented using &lt;a href=&quot;https:&#x2F;&#x2F;rapidjson.org&quot;&gt;Rapidjson&lt;&#x2F;a&gt;.
+This makes it relatively easier to add new API headers to extend the interface and support more functionality.&lt;&#x2F;p&gt;
+&lt;p&gt;Apart from this, one more important thing to keep in mind is that the WebUI is planned to replace the old interface and hopefully be shipped along with the main Retroshare app.
+And so it would make sense to keep dependencies to a minimum.
+This app will have a development process different from typical modern web dev practices.
+This app will not have dependencies(such as Nodejs), making it lightweight and able to easily integrate into the parent app’s build process.&lt;&#x2F;p&gt;
+&lt;p&gt;A minimal working example has been implemented and can be seen in the source page.&lt;&#x2F;p&gt;
+&lt;p&gt;Project source: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;RetroShare&#x2F;RSNewWebUI&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;My fork: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;rottencandy&#x2F;RSNewWebUI&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;rottencandy&#x2F;RSNewWebUI&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;a href=&quot;#overview&quot;&gt;#&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;A brief overview of the main goals to be expected from the project:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;A “tab” system to display different sections of the Retroshare interface.&lt;&#x2F;li&gt;
+&lt;li&gt;Detailed and asynchronously updating tabs about file transfers, downloads, adding peers, internal statistics, etc.&lt;&#x2F;li&gt;
+&lt;li&gt;Options in the client app to enable and launch the WebUI.&lt;&#x2F;li&gt;
+&lt;li&gt;A config panel with detailed frames for viewing and changing as many configuration options as possible.&lt;&#x2F;li&gt;
+&lt;li&gt;Styled UI using CSS for a more sleek and beautiful look that adds to the visual appeal.&lt;&#x2F;li&gt;
+&lt;li&gt;Replace the old WebUI and disable libresapi on merge.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The web interface would be extremely beneficial to the community, allowing Retroshare to leverage the flexibility and approachability of the web.
+It could be used by people who desire an alternate interface to Retroshare, for example, when using the nogui version,
+or due to the traditional GUI client being too demanding on low spec hardware, or due to the OS having problems with Qt, etc.&lt;&#x2F;p&gt;
+&lt;p&gt;Looking forward to an exciting summer working on this project. I will post more updates soon.&lt;&#x2F;p&gt;
+</description>
+        </item>
+    </channel>
+</rss>

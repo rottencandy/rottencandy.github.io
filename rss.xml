@@ -14,7 +14,7 @@
             <link>https://saud.wtf/blog/bitpath/</link>
             <guid>https://saud.wtf/blog/bitpath/</guid>
             <description>&lt;p&gt;You can play Bit Path &lt;a href=&quot;https:&#x2F;&#x2F;rottencandy.itch.io&#x2F;bitpath&quot;&gt;here&lt;&#x2F;a&gt;.
-&lt;img src=&quot;game.png&quot; alt=&quot;Screengrab of the game&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;bitpath&#x2F;game.png&quot; alt=&quot;Screengrab of the game&quot; &#x2F;&gt;
 Learning a lisp has been on my to-do list for too long,
 so was trying it out for game development.
 There has been &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;fleabitdev&#x2F;glsp&quot;&gt;a&lt;&#x2F;a&gt; &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;makuto&#x2F;cakelisp&quot;&gt;lot&lt;&#x2F;a&gt; &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;carp-lang&#x2F;Carp&quot;&gt;of&lt;&#x2F;a&gt; interesting activity in the gamedev lisp space which I&#x27;m very intrigued by.
@@ -27,7 +27,7 @@ and is super easy to learn due to its small spec and reliance on Lua for everyth
 I was able to get started writing it in just a day, since I already knew Lua,
 even though I never wrote lisps before.&lt;&#x2F;p&gt;
 &lt;p&gt;The platform&#x2F;framework I used to make the game is &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;nesbox&#x2F;TIC-80&quot;&gt;TIC-80&lt;&#x2F;a&gt;.
-&lt;img src=&quot;tic-80.png&quot; alt=&quot;TIC-80 in action&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;bitpath&#x2F;tic-80.png&quot; alt=&quot;TIC-80 in action&quot; &#x2F;&gt;
 This is commonly referred to as a fantasy console,
 it emulates a retro videogame console that never existed.
 What I really like about it is the artificial limitations it imposes,
@@ -250,7 +250,7 @@ and here we use &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;sharkdp&#x2F;
 &lt;p&gt;We can also make &lt;code&gt;bat&lt;&#x2F;code&gt; highlight the matching line, and make &lt;code&gt;fzf&lt;&#x2F;code&gt; scroll the preview window to the line.&lt;&#x2F;p&gt;
 &lt;p&gt;The overall result feels really fast and snappy, even on large codebases.
 Here&#x27;s me casually browsing the neovim codebase:
-&lt;img src=&quot;screenshot.png&quot; alt=&quot;Screenshot of the fuzzy searching in action&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;vim-fuzzy-search&#x2F;screenshot.png&quot; alt=&quot;Screenshot of the fuzzy searching in action&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;a href=&quot;#conclusion&quot;&gt;#&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;I will probably get bored of this very quickly.
@@ -282,7 +282,7 @@ nnoremap &amp;lt;silent&amp;gt; &amp;lt;Leader&amp;gt;s :call fzf#run(fzf#wrap({
             <guid>https://saud.wtf/blog/fourfold/</guid>
             <description>&lt;p&gt;FOURFOLD was my entry to the &lt;a href=&quot;https:&#x2F;&#x2F;js13kgames.com&quot;&gt;JS13K&lt;&#x2F;a&gt; games competition, it &lt;a href=&quot;https:&#x2F;&#x2F;2020.js13kgames.com&#x2F;#winners&quot;&gt;ranked&lt;&#x2F;a&gt; way better than my expectations; 7 overall, 4 in mobile category and 16 in WebMonetization category. Along with appearing in top 10 four times at the &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;js13kgames&#x2F;top-games-from-given-criteria-c5066b5fe38d&quot;&gt;individual criteria&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;Play it on the &lt;a href=&quot;https:&#x2F;&#x2F;js13kgames.com&#x2F;entries&#x2F;fourfold&quot;&gt;jam page&lt;&#x2F;a&gt; or on &lt;a href=&quot;https:&#x2F;&#x2F;rottencandy.itch.io&#x2F;fourfold&quot;&gt;itch.io&lt;&#x2F;a&gt;.
-&lt;img src=&quot;game.png&quot; alt=&quot;Screengrab of the game&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;game.png&quot; alt=&quot;Screengrab of the game&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;After being absolutely stumped by what people were pulling off with such a size limit in the past years, I decided it was time I too joined in on the fun.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;idea&quot;&gt;Idea&lt;a href=&quot;#idea&quot;&gt;#&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
@@ -311,7 +311,7 @@ I regret not adding many interesting ones that I came up with, like platforms th
 I may add them in the future, if I ever get motivated enough to turn this into a full game.&lt;&#x2F;p&gt;
 &lt;p&gt;I did however create an &amp;quot;orange&amp;quot; platform, which was like yellow, but had to be stepped on twice before it dissapeared. I scraped it out in the end because it wasn&#x27;t fun and made levels rather mundane.&lt;&#x2F;p&gt;
 &lt;p&gt;The rendering is really straightforward, because the platforms are just standard cubes. And since there is no rotation, I saved some bytes by drawing only the visible part of a cube:
-&lt;img src=&quot;platform.png&quot; alt=&quot;Sketch of the visible part of cube&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;platform.png&quot; alt=&quot;Sketch of the visible part of cube&quot; &#x2F;&gt;
 Only half the vertices required! The shader handles the coloring and shadows. If you observe closely, you&#x27;ll notice that the platform color fades out into the background from top to bottom.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;player&quot;&gt;Player&lt;a href=&quot;#player&quot;&gt;#&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
@@ -338,7 +338,7 @@ I ended up simply placing the grid starting with one-fourth of the screen from t
 &lt;p&gt;It had to be simple and easy to use, while also allowing to quickly create any kind of level.
 I used the editor to create all the levels, which helped me iterate on and improve it.&lt;&#x2F;p&gt;
 &lt;p&gt;The editor without the background. Looks pretty neat actually:
-&lt;img src=&quot;editor.png&quot; alt=&quot;Screengrab of the editor&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;editor.png&quot; alt=&quot;Screengrab of the editor&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;The pause &amp;quot;icon&amp;quot; is simply two &lt;code&gt;I&lt;&#x2F;code&gt;s.&lt;&#x2F;li&gt;
 &lt;li&gt;The finish and reset buttons are just unicode symbols.&lt;&#x2F;li&gt;
@@ -355,7 +355,7 @@ There is really no reason to not use it when it&#x27;s available right there.&lt
 &lt;p&gt;There&#x27;s no way I could afford to throw in a font file, so I rolled with a web-safe font.
 Looking at &lt;a href=&quot;https:&#x2F;&#x2F;www.cssfontstack.com&quot;&gt;cssfontsack.com&lt;&#x2F;a&gt;, I picked &lt;code&gt;Trebuchet&lt;&#x2F;code&gt;, it is sans-serif and seemed widely available.&lt;&#x2F;p&gt;
 &lt;p&gt;A very simple way to make default fonts look better is to use a smaller &lt;code&gt;font-width&lt;&#x2F;code&gt;. Thin fonts really tend to stand out:
-&lt;img src=&quot;fonts.png&quot; alt=&quot;A comparision of fonts&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;fonts.png&quot; alt=&quot;A comparision of fonts&quot; &#x2F;&gt;
 All it takes is a single line of CSS:&lt;&#x2F;p&gt;
 &lt;pre data-lang=&quot;css&quot; class=&quot;language-css &quot;&gt;&lt;code class=&quot;language-css&quot; data-lang=&quot;css&quot;&gt;font: 100 2.5rem Trebuchet, sans-serif;
 &lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
@@ -391,7 +391,7 @@ Having managed to finish everything inside the 13 kilobytes, I did not have to w
 I&#x27;m obsessed with it! The web development ecosystem desperately needs more such tools in my opinion.&lt;&#x2F;p&gt;
 &lt;p&gt;Compression is done with good &#x27;ol &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;LuaDist&#x2F;zip&quot;&gt;zip&lt;&#x2F;a&gt;, turning on all the options for maximum compression.&lt;&#x2F;p&gt;
 &lt;p&gt;Anyway, here&#x27;s the obligatory &amp;quot;All the code in a single image&amp;quot;:
-&lt;img src=&quot;code.png&quot; alt=&quot;Screenshot of minified code&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;fourfold&#x2F;code.png&quot; alt=&quot;Screenshot of minified code&quot; &#x2F;&gt;
 Along with that, there&#x27;s a tiny amount of HTML required to setup the canvas, along with a bit of CSS sprinkled in for the UI.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;takeaways&quot;&gt;Takeaways&lt;a href=&quot;#takeaways&quot;&gt;#&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
@@ -642,32 +642,32 @@ This has been a wonderful time for me, I learned a lot of new things that would 
             <description>&lt;blockquote&gt;
 &lt;p&gt;This is a mirror of a &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&#x2F;2019&#x2F;07&#x2F;22&#x2F;web-interface-for-retroshare-update-2&#x2F;&quot;&gt;post&lt;&#x2F;a&gt; I wrote on the &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&quot;&gt;Freifunk blog&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
-&lt;p&gt;&lt;img src=&quot;rs-login.jpg&quot; alt=&quot;Login page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-login.jpg&quot; alt=&quot;Login page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;I Realized that the visual appearance of the application felt very bland and uninteresting, so I decided to shift some of my focus to the design and visual aspect of the UI.
 I did plenty of reading about UI&#x2F;UX design principles and modern best practices during this time.
 And looks like it turned out pretty well, and is definitely a good improvement from the &lt;a href=&quot;https:&#x2F;&#x2F;blog.freifunk.net&#x2F;2019&#x2F;06&#x2F;23&#x2F;web-interface-for-retroshare-update-1&#x2F;&quot;&gt;previous&lt;&#x2F;a&gt; appearance.
 Also, since this is my first attempt at doing professional-level UX design, there is probably room for improvement, so feedback and suggestions are always welcome.&lt;&#x2F;p&gt;
 &lt;p&gt;The general theme has been redone from scratch. I chose this soft blue color palette by taking inspiration from the main app’s look:&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;img src=&quot;rs-home.jpg&quot; alt=&quot;Home page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-home.jpg&quot; alt=&quot;Home page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;The home tab, along with displaying the user certificate, now also allows to add friends by using their certificates.
 It is possible to add friends by copying the certificate contents, dragging and dropping the file, or simply selecting it from the file manager.&lt;&#x2F;p&gt;
 &lt;p&gt;Implemented modal messages within the browser that can be used as a popup dialogue box to display any kind of information (here showing information extracted from a Retroshare certificate):&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;img src=&quot;rs-modal.jpg&quot; alt=&quot;Modal&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-modal.jpg&quot; alt=&quot;Modal&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;As you can see, the navbar has also been revamped.
 And the best thing about it? Icons! I along with my mentors agreed on using the &lt;a href=&quot;https:&#x2F;&#x2F;fontawesome.com&#x2F;&quot;&gt;Font Awesome&lt;&#x2F;a&gt; icon library, which is open source (licensed with a combination of MIT, CC 4.0 &amp;amp; OFL 1.1 licenses).
 I can now utilize icons across the whole app.&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;img src=&quot;rs-nav.jpg&quot; alt=&quot;Nav bar&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-nav.jpg&quot; alt=&quot;Nav bar&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;The downloads tab has also been redesigned.
 Now showing all downloads in a slightly different way.
 This layout was chosen with extensibility in mind, it can easily be extended to contain a additional file-related settings and chunk views by having an expandable options box for each file.&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;img src=&quot;rs-dl.jpg&quot; alt=&quot;Downloads page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-dl.jpg&quot; alt=&quot;Downloads page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;The config tab can now be used to change a lot of the setting options similar to the main app.
 Network, node, services, files and people sections from the app have been implemented.
 I will shortly finish the remaining sections too.&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;img src=&quot;rs-config-1.jpg&quot; alt=&quot;Config page 1&quot; &#x2F;&gt;
-&lt;img src=&quot;rs-config-2.jpg&quot; alt=&quot;Home page 2&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-config-1.jpg&quot; alt=&quot;Config page 1&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-config-2.jpg&quot; alt=&quot;Home page 2&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;p&gt;Also notice the tooltip icon. Which when hovered on, gives a brief description about the option. Just like in Retroshare:&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;img src=&quot;rs-tooltip.jpg&quot; alt=&quot;Tooltip&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-3&#x2F;rs-tooltip.jpg&quot; alt=&quot;Tooltip&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;next-steps&quot;&gt;Next Steps&lt;a href=&quot;#next-steps&quot;&gt;#&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;Now that the design is steadily making way for a more detailed and specialized variety of widgets and components, I am working on creating tabs for Network, People, Chats, Mail, Channels &amp;amp; Forums so that the Web Interface can finally become a fully usable alternative to the main client app.&lt;&#x2F;p&gt;
@@ -694,9 +694,9 @@ The background task gets activated whenever a component’s view is rendered and
 Mithril also has it’s own &lt;a href=&quot;https:&#x2F;&#x2F;mithril.js.org&#x2F;autoredraw.html&quot;&gt;auto-redraw&lt;&#x2F;a&gt; system which refreshes views when a component’s event handlers are called.
 But it does not refresh when component attributes are updated, or when raw promises are resolved.&lt;&#x2F;p&gt;
 &lt;p&gt;Here are a few screenshots displaying the new UI style:&lt;&#x2F;p&gt;
-&lt;p&gt;&lt;img src=&quot;rs-login.png&quot; alt=&quot;Login page&quot; &#x2F;&gt;
-&lt;img src=&quot;rs-home.png&quot; alt=&quot;Home page&quot; &#x2F;&gt;
-&lt;img src=&quot;rs-dloads.png&quot; alt=&quot;Downloads page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-2&#x2F;rs-login.png&quot; alt=&quot;Login page&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-2&#x2F;rs-home.png&quot; alt=&quot;Home page&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;retroshare-update-2&#x2F;rs-dloads.png&quot; alt=&quot;Downloads page&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;next-steps&quot;&gt;Next Steps&lt;a href=&quot;#next-steps&quot;&gt;#&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;Along with the goals displayed in the first post, these will be given a higher priority for completion during the coming phase leading up to the next evaluation:&lt;&#x2F;p&gt;

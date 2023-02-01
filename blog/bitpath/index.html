@@ -1,49 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="monetization" content="$ilp.uphold.com/wJiQfZf9NYg8" />
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <meta name="author" content="Mohammed Saud" />
-    
-<title>Bit Path - Lisp and game development - Saud</title>
-<meta property="og:type" content="website" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:title" content="Bit Path - Lisp and game development" />
-<meta property="og:description" content="Making a game in a lisp" />
-<meta property="og:url" content="https:&#x2F;&#x2F;saud.wtf&#x2F;blog&#x2F;bitpath&#x2F;" />
+<html lang="en"><head>
+        <title>Bit Path - Lisp and game development | Saud</title>
+        <meta charset="utf-8">
 
-<meta property="og:image" content="https://saud.wtf/blog/bitpath/game.png" />
 
-<meta name="description" content="Making a game in a lisp" />
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Bit Path - Lisp and game development" />
-<meta name="twitter:creator" content="@rotttencandy" />
+        <meta name="monetization" content="$ilp.uphold.com/wJiQfZf9NYg8">
 
-    <link rel="stylesheet" href="/light.css" />
-    <link rel="stylesheet" href="/dark.css" media="screen and (prefers-color-scheme: dark)" />
-    <link href="https://pagecdn.io/lib/easyfonts/open-sans.css" rel="stylesheet" />
-    <link href="https://pagecdn.io/lib/easyfonts/quicksand.css" rel="stylesheet" />
-  </head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <body>
-    <div class="content">
-      
+        <meta name="author" content="saud">
 
-<header>
-  <a href="/">Home</a> | <a href="/blog">Posts</a>
 
-  <h1 class="w500">
-    Bit Path - Lisp and game development
-  </h1>
-  <strong class="w400"><time datetime=2022-06-10>2022-06-10</time></strong>
+        <meta property="og:url" content="https://rottencandy.github.io/blog/bitpath/">
+
+        <meta property="og:type" content="website">
+
+        <meta property="og:title" content="Bit Path - Lisp and game development">
+
+        <meta property="og:locale" content="en_US">
+
+
+        <meta name="twitter:title" content="Bit Path - Lisp and game development">
+
+        <meta name="twitter:creator" content="@rotttencandy">
+
+        <meta name="twitter:card" content="summary">
+
+
+        
+        <meta property="og:description" content="Making a game in a lisp">
+
+        <meta name="description" content="Making a game in a lisp">
+
+        
+
+        
+        <meta property="og:image" content="https://rottencandy.github.io/img/bitpath/game.png">
+
+        
+
+        
+        <link rel="stylesheet" href="/light.css">
+        <link rel="stylesheet" href="/dark.css" media="screen and (prefers-color-scheme: dark)">
+        <link href="https://pagecdn.io/lib/easyfonts/open-sans.css" rel="stylesheet">
+        <link href="https://pagecdn.io/lib/easyfonts/quicksand.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="content">
+            <header>
+    <a href="/">Home</a> | <a href="/blog">Posts</a>
+
+    <h1 class="w500">Bit Path - Lisp and game development</h1>
+    <strong class="w400"><time datetime="2022-06-10">2022-06-10</time></strong>
 </header>
 
-<hr/>
+<hr>
 
 <main>
-<p>You can play Bit Path <a href="https://rottencandy.itch.io/bitpath">here</a>.
-<img src="https://saud.wtf/blog/bitpath/game.png" alt="Screengrab of the game" />
+    <p>You can play Bit Path <a href="https://rottencandy.itch.io/bitpath">here</a>.
+<img src="/img/bitpath/game.png" alt="Screengrab of the game">
 Learning a lisp has been on my to-do list for too long,
 so was trying it out for game development.
 There has been <a href="https://github.com/fleabitdev/glsp">a</a> <a href="https://github.com/makuto/cakelisp">lot</a> <a href="https://github.com/carp-lang/Carp">of</a> interesting activity in the gamedev lisp space which I'm very intrigued by.
@@ -56,7 +72,7 @@ and is super easy to learn due to its small spec and reliance on Lua for everyth
 I was able to get started writing it in just a day, since I already knew Lua,
 even though I never wrote lisps before.</p>
 <p>The platform/framework I used to make the game is <a href="https://github.com/nesbox/TIC-80">TIC-80</a>.
-<img src="https://saud.wtf/blog/bitpath/tic-80.png" alt="TIC-80 in action" />
+<img src="/img/bitpath/tic-80.png" alt="TIC-80 in action">
 This is commonly referred to as a fantasy console,
 it emulates a retro videogame console that never existed.
 What I really like about it is the artificial limitations it imposes,
@@ -76,22 +92,22 @@ I can confidently say that lisp macros are a great cheap way to scratch that itc
 The ability to modify syntax trees during compile-time is, although not exclusive,
 definitely the easiest and most intuitive out of all programming languages I've used so far.</p>
 <p>Here's the first macro I made:</p>
-<pre data-lang="cl" class="language-cl "><code class="language-cl" data-lang="cl">(macro enum! [...]
+<pre><code class="language-lisp hljs">(<span class="hljs-name">macro</span> enum! [...]
   `(local ,[...] ,(icollect [i (ipairs [...])] i)))
 </code></pre>
 <p>This basically converts this:</p>
-<pre data-lang="cl" class="language-cl "><code class="language-cl" data-lang="cl">(enum! E1 E2 E3)
+<pre><code class="language-lisp hljs">(<span class="hljs-name">enum!</span> E1 E2 E3)
 </code></pre>
 <p>Into this:</p>
-<pre data-lang="cl" class="language-cl "><code class="language-cl" data-lang="cl">(local [E1 E2 E3] [1 2 3])
+<pre><code class="language-lisp hljs">(<span class="hljs-name">local</span> [E1 E2 E3] [<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>])
 </code></pre>
 <p>Which is just variable assignment.
 And it's not very flexible!
 It won't even work inside nested structures,
 like this one for example:</p>
-<pre data-lang="lisp" class="language-lisp "><code class="language-lisp" data-lang="lisp">(let [item { :weight 5
-             :pos    [5 10]
-             :type   (enum! COIN TRAP HEALTH)}]      ; won&#x27;t work
+<pre><code class="language-lisp hljs">(<span class="hljs-name">let</span> [item { <span class="hljs-symbol">:weight</span> <span class="hljs-number">5</span>
+             <span class="hljs-symbol">:pos</span>    [<span class="hljs-number">5</span> <span class="hljs-number">10</span>]
+             <span class="hljs-symbol">:type</span>   (<span class="hljs-name">enum!</span> COIN TRAP HEALTH)}]      <span class="hljs-comment">; won't work</span>
 </code></pre>
 <p>Since <code>local</code> cannot be used to define table properties in Lua,
 this does not evaluate correctly.</p>
@@ -107,15 +123,15 @@ Although I hear so much about paredit that I might just bite the bullet and lear
 <p>So why did I decide to create this macro?
 Well, I've been playing around with this idea recently,
 a way to create and run state machines without separating states from transitions and triggers.
-I'm going to call it a <em>&quot;declarative state machine&quot;</em>.</p>
+I'm going to call it a <em>"declarative state machine"</em>.</p>
 <p>Here's a basic example:</p>
-<pre data-lang="lisp" class="language-lisp "><code class="language-lisp" data-lang="lisp">{
-  RUNNING (fn [])
-            (if (jump-pressed?)
+<pre><code class="language-lisp hljs">{
+  RUNNING (<span class="hljs-name">fn</span> [])
+            (<span class="hljs-name">if</span> (<span class="hljs-name">jump-pressed</span>?)
               JUMPING)
 
-  JUMPING (fn [])
-            (if (player-on-ground)
+  JUMPING (<span class="hljs-name">fn</span> [])
+            (<span class="hljs-name">if</span> (<span class="hljs-name">player-on-ground</span>)
               RUNNING)
   ....
 }
@@ -130,28 +146,28 @@ and transitions should simply be a matter of specifying the next state to switch
 <p>With the <code>enum</code> macro it should be easy to define the state keys that I could use to implement the state machine!
 ... Or so I thought.
 I had originally implemented my state machine like so:</p>
-<pre data-lang="lisp" class="language-lisp "><code class="language-lisp" data-lang="lisp">(fn state-machine [states-tbl]
-  (var current (. states-tbl 1))
-  (fn [...]
-    (let [next (current ...)]
-      (match (type next)
-        :number   (set current (. states-tbl next))
-        :function (set current next)))
+<pre><code class="language-lisp hljs">(<span class="hljs-name">fn</span> state-machine [states-tbl]
+  (<span class="hljs-name">var</span> current (. states-tbl <span class="hljs-number">1</span>))
+  (<span class="hljs-name">fn</span> [...]
+    (<span class="hljs-name">let</span> [next (<span class="hljs-name">current</span> ...)]
+      (<span class="hljs-name">match</span> (<span class="hljs-name">type</span> next)
+        <span class="hljs-symbol">:number</span>   (<span class="hljs-name">set</span> current (. states-tbl next))
+        <span class="hljs-symbol">:function</span> (<span class="hljs-name">set</span> current next)))
     next))
 </code></pre>
 <p>And when using it, I had to have an extra initialization step just for the enums:</p>
-<pre data-lang="lisp" class="language-lisp "><code class="language-lisp" data-lang="lisp">(local player-state
-  (do
-    (enum! [RUNNING JUMPING])
-    (state-machine { RUNNING (fn [] ....)
-                   { JUMPING (fn [] ....) })))
+<pre><code class="language-lisp hljs">(<span class="hljs-name">local</span> player-state
+  (<span class="hljs-name">do</span>
+    (<span class="hljs-name">enum!</span> [RUNNING JUMPING])
+    (<span class="hljs-name">state-machine</span> { RUNNING (<span class="hljs-name">fn</span> [] ....)
+                   { JUMPING (<span class="hljs-name">fn</span> [] ....) })))
 </code></pre>
 <p>I felt that although this still works, the extra enum initialization can still be avoided.
 I went with this approach for the jam (because time was running out)
 but during post-jam clarity, I decided to convert the entire <code>state-machine</code> funciton to a macro:</p>
-<pre data-lang="lisp" class="language-lisp "><code class="language-lisp" data-lang="lisp">(macro state-machine! [states-tbl initial]
-  (let [keys# (icollect [k (pairs states-tbl)] k)
-        nums# (icollect [i (ipairs keys#)] i)]
+<pre><code class="language-lisp hljs">(<span class="hljs-name">macro</span> state-machine! [states-tbl initial]
+  (<span class="hljs-name">let</span> [keys# (<span class="hljs-name">icollect</span> [k (<span class="hljs-name">pairs</span> states-tbl)] k)
+        nums# (<span class="hljs-name">icollect</span> [i (<span class="hljs-name">ipairs</span> keys#)] i)]
 
     `(let [,keys#  ,nums#
            states# ,states-tbl]
@@ -167,9 +183,9 @@ but during post-jam clarity, I decided to convert the entire <code>state-machine
 <p>This is used essentially the same as the <code>state-machine</code> funciton above,
 but it also initializes enum keys in the macro itself,
 so now it doesn't need the enum initializaiton step and the usage is simplified to:</p>
-<pre data-lang="lisp" class="language-lisp "><code class="language-lisp" data-lang="lisp">(local player-state
-  (state-machine! { RUNNING (fn [] ....)
-                  { JUMPING (fn [] ....) }))
+<pre><code class="language-lisp hljs">(<span class="hljs-name">local</span> player-state
+  (<span class="hljs-name">state-machine!</span> { RUNNING (<span class="hljs-name">fn</span> [] ....)
+                  { JUMPING (<span class="hljs-name">fn</span> [] ....) }))
 </code></pre>
 <p>And I don't need my <code>enum!</code> macro anymore,
 this makes using my state machine much simpler.</p>
@@ -178,17 +194,17 @@ a third state that can run when there is a transition happening from one to anot
 Because of the way state transitions are handled,
 it's possible to return a function instead of a state,
 and that funciton, then becomes the current state until it returns the next state itself:</p>
-<pre data-lang="lisp" class="language-lisp "><code class="language-lisp" data-lang="lisp">(local car-state
-  (state-machine! { MOVING (fn []
+<pre><code class="language-lisp hljs">(<span class="hljs-name">local</span> car-state
+  (<span class="hljs-name">state-machine!</span> { MOVING (<span class="hljs-name">fn</span> []
                              ....
 
-                             (if (brakes-applied?)
-			       (fn []
-			         (reduce-car-speed)
-				 (if (= car-speed 0)
+                             (<span class="hljs-name">if</span> (<span class="hljs-name">brakes-applied</span>?)
+			       (<span class="hljs-name">fn</span> []
+			         (<span class="hljs-name">reduce-car-speed</span>)
+				 (<span class="hljs-name">if</span> (<span class="hljs-name">=</span> car-speed <span class="hljs-number">0</span>)
 				   STOPPED))))
 
-                  { STOPPED (fn [] ....) }))
+                  { STOPPED (<span class="hljs-name">fn</span> [] ....) }))
 </code></pre>
 <p>This system has been really helpful in keeping game logic organized,
 and I can certainly see myself using this a lot more moving forward,
@@ -198,10 +214,9 @@ I think I can finally start calling myself a game developer...</p>
 
 </main>
 
-<hr/>
+<hr>
 
+        </div>
+    
 
-    </div>
-  </body>
-
-</html>
+</body></html>

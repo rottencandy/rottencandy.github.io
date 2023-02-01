@@ -1,4 +1,4 @@
 User-agent: *
-Disallow:
 Allow: /
-Sitemap: https://saud.wtf/sitemap.xml
+
+Sitemap: https://rottencandy.github.io/sitemap.xml

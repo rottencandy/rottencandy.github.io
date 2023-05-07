@@ -28,6 +28,15 @@
         </item>
         
         <item>
+            <title>Make Conway's Game of Life in WebAssembly</title>
+            <link>https://rottencandy.github.io/blog/wasm-game-of-life/</link>
+            <guid>https://rottencandy.github.io/blog/wasm-game-of-life/</guid>
+            <description>WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.</description>
+            <language>en</language>
+            <pubDate>Tue Apr 13 2021 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+        </item>
+        
+        <item>
             <title>Making of FOURFOLD</title>
             <link>https://rottencandy.github.io/blog/fourfold/</link>
             <guid>https://rottencandy.github.io/blog/fourfold/</guid>

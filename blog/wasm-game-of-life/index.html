@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+        <title>Make Conway's Game of Life in WebAssembly | saud</title>
+        <meta charset="utf-8">
+
+
+        <meta name="monetization" content="$ilp.uphold.com/wJiQfZf9NYg8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="author" content="saud">
+
+
+        <meta property="og:url" content="https://rottencandy.github.io/blog/wasm-game-of-life/">
+
+        <meta property="og:type" content="website">
+
+        <meta property="og:title" content="Make Conway's Game of Life in WebAssembly">
+
+        <meta property="og:locale" content="en_US">
+
+
+        <meta name="twitter:title" content="Make Conway's Game of Life in WebAssembly">
+
+        <meta name="twitter:creator" content="@rotttencandy">
+
+        <meta name="twitter:card" content="summary">
+
+
+        
+        <meta property="og:description" content="WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.">
+
+        <meta name="description" content="WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.">
+
+        
+
+        
+        <meta property="og:image" content="https://rottencandy.github.io/img/wasm-game-of-life/life.png">
+
+        
+
+        
+        <link rel="stylesheet" href="/light.css">
+        <link rel="stylesheet" href="/dark.css" media="screen and (prefers-color-scheme: dark)">
+        <link href="https://pagecdn.io/lib/easyfonts/open-sans.css" rel="stylesheet">
+        <link href="https://pagecdn.io/lib/easyfonts/quicksand.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="content">
+            <header>
+    <a href="/">Home</a> | <a href="/blog">Posts</a>
+
+    <h1 class="w500">Make Conway's Game of Life in WebAssembly</h1>
+    <strong class="w400"><time datetime="2021-04-13">2021-04-13</time></strong>
+</header>
+
+<hr>
+
+<main>
+    <blockquote>
+<p>This is a mirror of a <a href="https://opensource.com/article/21/4/game-life-simulation-webassembly">post</a> I originally wrote on <a href="https://opensource.com">opensource.com</a>.</p>
+</blockquote>
+<p>Conway's <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Game of Life</a> is a popular programming exercise to create a <a href="https://en.wikipedia.org/wiki/Cellular_automaton">cellular
+automaton</a>, a system that consists of an infinite grid of cells. You don't play
+the game in the traditional sense; in fact, it is sometimes referred to as a
+game for zero players.</p>
+<p>Once you start the Game of Life, the game plays itself to multiply and sustain
+"life." In the game, digital cells representing lifeforms are allowed to change
+states as defined by a set of rules. When the rules are applied to cells
+through multiple iterations, they exhibit complex behavior and interesting
+patterns.</p>
+<p>The Game of Life simulation is a very good candidate for a WebAssembly
+implementation because of how computationally expensive it can be; every
+cell's state in the entire grid must be calculated for every iteration.
+WebAssembly excels at computationally expensive tasks due to its predefined
+execution environment and memory granularity, among many other features.</p>
+<h2>Compiling to WebAssembly</h2>
+<p>Although it's possible to write WebAssembly by hand, it is very unintuitive
+and error-prone as complexity increases. Most importantly, it's not intended
+to be written that way. It would be the equivalent of manually writing <a href="https://en.wikipedia.org/wiki/Assembly_language">assembly
+language</a> instructions.</p>
+<p>Here's a simple WebAssembly function to add two numbers:</p>
+<pre><code class="language-lisp hljs">(<span class="hljs-name">func</span> $Add (<span class="hljs-name">param</span> $<span class="hljs-number">0</span> i32) (<span class="hljs-name">param</span> $<span class="hljs-number">1</span> i32) (<span class="hljs-name">result</span> i32)
+    local.get $<span class="hljs-number">0</span>
+    local.get $<span class="hljs-number">1</span>
+    i32.add
+)
+</code></pre>
+<p>It is possible to compile WebAssembly modules using many existing languages,
+including C, C++, Rust, Go, and even interpreted languages like Lua and Python.
+This <a href="https://github.com/appcypher/awesome-wasm-langs">list</a> is only growing.</p>
+<p>One of the problems with using existing languages is that WebAssembly does not
+have much of a runtime. It does not know what it means to <a href="https://en.wikipedia.org/wiki/C_dynamic_memory_allocation">free a pointer</a> or
+what a <a href="https://en.wikipedia.org/wiki/Closure_(computer_programming)">closure</a> is. All these language-specific runtimes have to be included in
+the resulting WebAssembly binaries. Runtime size varies by language, but it
+has an impact on module size and execution time.</p>
+<h2>AssemblyScript</h2>
+<p><a href="https://www.assemblyscript.org">AssemblyScript</a> is one language that is trying to overcome some of these
+challenges with a different approach. AssemblyScript is designed specifically
+for WebAssembly, with a focus on providing low-level control, producing
+smaller binaries, and reducing the runtime overhead.</p>
+<p>AssemblyScript uses a strictly typed variant of <a href="https://www.typescriptlang.org">TypeScript</a>, a superset of
+JavaScript. Developers familiar with TypeScript do not have to go through the
+trouble of learning an entirely new language.</p>
+<h2>Getting started</h2>
+<p>The AssemblyScript compiler can easily be installed through <a href="https://nodejs.org/en/download">Node.js</a>. Start by
+initializing a new project in an empty directory:</p>
+<pre><code class="language-sh hljs language-bash">npm init
+npm install --save-dev assemblyscript
+</code></pre>
+<p>AssemblyScript comes with <code>asinit</code>, which should be installed when you run the
+installation command above. It is a helpful utility to quickly set up an
+AssemblyScript project with the recommended directory structure and
+configuration files:</p>
+<pre><code class="language-sh hljs language-bash">npx asinit .
+</code></pre>
+<p>The newly created <code>assembly</code> directory will contain all the AssemblyScript code,
+a simple example function in <code>assembly/index.ts</code>, and the <code>asbuild</code> command inside
+<code>package.json</code>. <code>asbuild</code>, which compiles the code into WebAssembly binaries.</p>
+<p>When you run <code>npm run asbuild</code> to compile the code, it creates files inside
+<code>build</code>. The <code>.wasm</code> files are the generated WebAssembly modules. The <code>.wat</code> files
+are the modules in text format and are generally used for debugging and
+inspection.</p>
+<p>You have to do a little bit of work to get the binaries to run on a browser.</p>
+<p>First, create a simple HTML file, <code>index.html</code>:</p>
+<pre><code class="language-html hljs language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">utf-8</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Game of life<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">'./index.js'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</code></pre>
+<p>Next, replace the contents of <code>index.js</code> with the code snippet below to load the
+WebAssembly modules:</p>
+<pre><code class="language-js hljs language-javascript"><span class="hljs-keyword">const</span> <span class="hljs-title function_">runWasm</span> = <span class="hljs-keyword">async</span> (<span class="hljs-params"></span>) =&gt; {
+  <span class="hljs-keyword">const</span> <span class="hljs-variable language_">module</span> = <span class="hljs-keyword">await</span> <span class="hljs-title class_">WebAssembly</span>.<span class="hljs-title function_">instantiateStreaming</span>(<span class="hljs-title function_">fetch</span>(<span class="hljs-string">'./build/optimized.wasm'</span>));
+  <span class="hljs-keyword">const</span> <span class="hljs-built_in">exports</span> = <span class="hljs-variable language_">module</span>.<span class="hljs-property">instance</span>.<span class="hljs-property">exports</span>;
+
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">'Sum = '</span>, <span class="hljs-built_in">exports</span>.<span class="hljs-title function_">add</span>(<span class="hljs-number">20</span>, <span class="hljs-number">22</span>));
+};
+
+<span class="hljs-title function_">runWasm</span>();
+</code></pre>
+<p>This fetches the binary and passes it to <code>WebAssembly.instantiateStreaming</code>, the
+browser API that compiles a module into a ready-to-use instance. This is an
+asynchronous operation, so it is run inside an async function so that await
+can be used to wait for it to finish compiling.</p>
+<p>The <code>module.instance.exports</code> object contains all the functions exported by
+AssemblyScript. Use the example function in <code>assembly/index.ts</code> and log the
+result.</p>
+<p>You will need a simple development server to host these files. There are a lot
+of options listed in <a href="https://gist.github.com/willurd/5720255">this gist</a>. I used <a href="https://www.npmjs.com/package/node-static">node-static</a>:</p>
+<pre><code class="language-sh hljs language-bash">npm install -g node-static
+static
+</code></pre>
+<p>You can view the result by pointing your browser to <code>localhost:8080</code> and opening
+the console.</p>
+<p><img src="/img/wasm-game-of-life/console_log.png" alt="ScreenShot of the browser console showing the result"></p>
+<h2>Drawing to a canvas</h2>
+<p>You will be drawing all the cells onto a <code>&lt;canvas&gt;</code> element:</p>
+<pre><code class="language-html hljs language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">canvas</span> <span class="hljs-attr">id</span>=<span class="hljs-string">canvas</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">canvas</span>&gt;</span>
+
+    ...
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+</code></pre>
+<p>Add some CSS:</p>
+<pre><code class="language-html hljs language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+    ...
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">type</span>=<span class="hljs-string">text/css</span>&gt;</span><span class="language-css">
+    <span class="hljs-selector-tag">body</span> {
+      <span class="hljs-attribute">background</span>: <span class="hljs-number">#ccc</span>;
+    }
+    <span class="hljs-selector-tag">canvas</span> {
+      <span class="hljs-attribute">display</span>: block;
+      <span class="hljs-attribute">padding</span>: <span class="hljs-number">0</span>;
+      <span class="hljs-attribute">margin</span>: auto;
+      <span class="hljs-attribute">width</span>: <span class="hljs-number">40%</span>;
+
+      <span class="hljs-attribute">image-rendering</span>: pixelated;
+      <span class="hljs-attribute">image-rendering</span>: crisp-edges;
+    }
+    </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+</code></pre>
+<p>The <code>image-rendering</code> styles are used to prevent the canvas from smoothing and
+blurring out pixelated images.</p>
+<p>You will need a canvas drawing context in <code>index.js</code>:</p>
+<pre><code class="language-js hljs language-javascript"><span class="hljs-keyword">const</span> canvas = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">'canvas'</span>);
+<span class="hljs-keyword">const</span> ctx = canvas.<span class="hljs-title function_">getContext</span>(<span class="hljs-string">'2d'</span>);
+</code></pre>
+<p>There are many functions in the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API">Canvas API</a> that you could use for drawing—but
+you need to draw using WebAssembly, not JavaScript.</p>
+<p>Remember that WebAssembly does NOT have access to the browser APIs that
+JavaScript has, and any call that needs to be made should be interfaced
+through JavaScript. This also means that your WebAssembly module will run the
+fastest if there is as little communication with JavaScript as possible.</p>
+<p>One method is to create <a href="https://developer.mozilla.org/en-US/docs/Web/API/ImageData">ImageData</a> (a data type for the underlying pixel data
+of a canvas), fill it up with the WebAssembly module's memory, and draw it on
+the canvas. This way, if the memory buffer is updated inside WebAssembly, it
+will be immediately available to the <code>ImageData</code>.</p>
+<p>Define the pixel count of the canvas and create an <code>ImageData</code> object:</p>
+<pre><code class="language-js hljs language-javascript"><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">WIDTH</span> = <span class="hljs-number">10</span>, <span class="hljs-variable constant_">HEIGHT</span> = <span class="hljs-number">10</span>;
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">runWasm</span> = <span class="hljs-keyword">async</span> (<span class="hljs-params"></span>) =&gt; {
+...
+
+canvas.<span class="hljs-property">width</span> = <span class="hljs-variable constant_">WIDTH</span>;
+canvas.<span class="hljs-property">height</span> = <span class="hljs-variable constant_">HEIGHT</span>;
+
+<span class="hljs-keyword">const</span> ctx = canvas.<span class="hljs-title function_">getContext</span>(<span class="hljs-string">'2d'</span>);
+<span class="hljs-keyword">const</span> memoryBuffer = <span class="hljs-built_in">exports</span>.<span class="hljs-property">memory</span>.<span class="hljs-property">buffer</span>;
+<span class="hljs-keyword">const</span> memoryArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Uint8ClampedArray</span>(memoryBuffer)
+
+<span class="hljs-keyword">const</span> imageData = ctx.<span class="hljs-title function_">createImageData</span>(<span class="hljs-variable constant_">WIDTH</span>, <span class="hljs-variable constant_">HEIGHT</span>);
+imageData.<span class="hljs-property">data</span>.<span class="hljs-title function_">set</span>(memoryArray.<span class="hljs-title function_">slice</span>(<span class="hljs-number">0</span>, <span class="hljs-variable constant_">WIDTH</span> * <span class="hljs-variable constant_">HEIGHT</span> * <span class="hljs-number">4</span>));
+ctx.<span class="hljs-title function_">putImageData</span>(imageData, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+</code></pre>
+<p>The memory of a WebAssembly module is provided in <code>exports.memory.buffer</code> as an
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer">ArrayBuffer</a>. You need to use it as an array of 8-bit unsigned integers or
+<code>Uint8ClampedArray</code>. Now you can fill up the module's memory with some pixels.
+In <code>assembly/index.ts</code>, you first need to grow the available memory:</p>
+<pre><code class="language-js hljs language-javascript">memory.<span class="hljs-title function_">grow</span>(<span class="hljs-number">1</span>);
+</code></pre>
+<p>WebAssembly does not have access to memory by default and needs to request it
+from the browser using the <code>memory.grow</code> function. Memory grows in chunks of
+64Kb, and the number of required chunks can be specified when calling it. You
+will not need more than one chunk for now.</p>
+<p>Keep in mind that memory can be requested multiple times, whenever needed, and
+once acquired, memory cannot be freed or given back to the browser.</p>
+<p>Writing to the memory:</p>
+<pre><code class="language-js hljs language-javascript">store&lt;u32&gt;(<span class="hljs-number">0</span>, <span class="hljs-number">0xff101010</span>);
+</code></pre>
+<p>A pixel is represented by 32 bits, with the RGBA values taking up 8 bits each.
+Here, RGBA is defined in reverse—ABGR—because WebAssembly is <a href="https://en.wikipedia.org/wiki/Endianness">little-endian</a>.</p>
+<p>The <code>store</code> function stores the value <code>0xff101010</code> at index <code>0</code>, taking up 32 bits.
+The alpha value is <code>0xff</code> so that the pixel is fully opaque.</p>
+<p><img src="/img/wasm-game-of-life/color_bits.png" alt="A diagram of the memory representation of the pixel color and it's byte
+order. The memory is divided into four boxes, each box representing 8 bits.
+The boxes hold color value for alpha, blue, green, and red respectively."></p>
+<p>Build the module again with <code>npm run asbuild</code> before refreshing the page to see
+your first pixel on the top-left of the canvas.</p>
+<h2>Implementing rules</h2>
+<p>Let's review the rules. The <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules">Game of Life Wikipedia page</a> summarizes them nicely:</p>
+<ol>
+<li>Any live cell with fewer than two live neighbors dies, as if by underpopulation.</li>
+<li>Any live cell with two or three live neighbors lives on to the next generation.</li>
+<li>Any live cell with more than three live neighbors dies, as if by overpopulation.</li>
+<li>Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.</li>
+</ol>
+<p>You need to iterate through all the rows, implementing these rules on each cell. You do not know the width and height of the grid, so write a little function to initialize the WebAssembly module with this information:</p>
+<pre><code class="language-ts hljs language-typescript"><span class="hljs-keyword">let</span> <span class="hljs-attr">universe_width</span>: u32;
+<span class="hljs-keyword">let</span> <span class="hljs-attr">universe_height</span>: u32;
+<span class="hljs-keyword">let</span> <span class="hljs-attr">alive_color</span>: u32;
+<span class="hljs-keyword">let</span> <span class="hljs-attr">dead_color</span>: u32;
+<span class="hljs-keyword">let</span> <span class="hljs-attr">chunk_offset</span>: u32;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">init</span>(<span class="hljs-params">width: u32, height: u32</span>): <span class="hljs-built_in">void</span> {
+  universe_width = width;
+  universe_height = height;
+  chunk_offset = width * height * <span class="hljs-number">4</span>;
+
+  alive_color = <span class="hljs-number">0xff101010</span>;
+  dead_color = <span class="hljs-number">0xffefefef</span>;
+}
+</code></pre>
+<p>Now you can use this function in <code>index.js</code> to provide data to the module:</p>
+<pre><code class="language-js hljs language-javascript"><span class="hljs-built_in">exports</span>.<span class="hljs-title function_">init</span>(<span class="hljs-variable constant_">WIDTH</span>, <span class="hljs-variable constant_">HEIGHT</span>);
+</code></pre>
+<p>Next, write an <code>update</code> function to iterate over all the cells, count the number
+of active neighbors for each, and set the current cell's state accordingly:</p>
+<pre><code class="language-ts hljs language-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">update</span>(<span class="hljs-params"></span>): <span class="hljs-built_in">void</span> {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> <span class="hljs-attr">x</span>: u32 = <span class="hljs-number">0</span>; x &lt; universe_width; x++) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> <span class="hljs-attr">y</span>: u32 = <span class="hljs-number">0</span>; y &lt; universe_height; y++) {
+
+      <span class="hljs-keyword">const</span> neighbours = <span class="hljs-title function_">countNeighbours</span>(x, y);
+
+      <span class="hljs-keyword">if</span> (neighbours &lt; <span class="hljs-number">2</span>) {
+        <span class="hljs-comment">// less than 2 neighbours, cell is no longer alive</span>
+        <span class="hljs-title function_">setCell</span>(x, y, dead_color);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (neighbours == <span class="hljs-number">3</span>) {
+        <span class="hljs-comment">// cell will be alive</span>
+        <span class="hljs-title function_">setCell</span>(x, y, alive_color);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (neighbours &gt; <span class="hljs-number">3</span>) {
+        <span class="hljs-comment">// cell dies due to overpopulation</span>
+        <span class="hljs-title function_">setCell</span>(x, y, dead_color);
+      }
+    }
+  }
+
+  <span class="hljs-title function_">copyToPrimary</span>();
+}
+</code></pre>
+<p>You have two copies of cell arrays, one representing the current state and the
+other for calculating and temporarily storing the next state. After the
+calculation is done, the second array is copied to the first for rendering.</p>
+<p>The rules are fairly straightforward, but the <code>countNeighbours()</code> function looks
+interesting. Take a closer look:</p>
+<pre><code class="language-ts hljs language-typescript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">countNeighbours</span>(<span class="hljs-params">x: u32, y: u32</span>): u32 {
+  <span class="hljs-keyword">let</span> neighbours = <span class="hljs-number">0</span>;
+
+  <span class="hljs-keyword">const</span> max_x = universe_width - <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">const</span> max_y = universe_height - <span class="hljs-number">1</span>;
+
+  <span class="hljs-keyword">const</span> y_above = y == <span class="hljs-number">0</span> ? max_y : y - <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">const</span> y_below = y == max_y ? <span class="hljs-number">0</span> : y + <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">const</span> x_left = x == <span class="hljs-number">0</span> ? max_x : x - <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">const</span> x_right = x == max_x ? <span class="hljs-number">0</span> : x + <span class="hljs-number">1</span>;
+
+  <span class="hljs-comment">// top left</span>
+  <span class="hljs-keyword">if</span>(<span class="hljs-title function_">getCell</span>(x_left, y_above) == alive_color) {
+    neighbours++;
+  }
+
+  <span class="hljs-comment">// top</span>
+  <span class="hljs-keyword">if</span>(<span class="hljs-title function_">getCell</span>(x, y_above) == alive_color) {
+    neighbours++;
+  }
+
+  <span class="hljs-comment">// top right</span>
+  <span class="hljs-keyword">if</span>(<span class="hljs-title function_">getCell</span>(x_right, y_above) == alive_color) {
+    neighbours++;
+  }
+
+  ...
+
+  <span class="hljs-keyword">return</span> neighbours;
+}
+</code></pre>
+<p><img src="/img/wasm-game-of-life/count_neighbours.png" alt="A diagram showing the co-ordinates of a cell's neighbors and how they are
+calculated using the x &amp; y axes"></p>
+<p>Every cell has eight neighbors, and you can check if each one is in the
+<code>alive_color</code> state. The important situation handled here is if a cell is
+exactly on the edge of the grid. Cellular automata are generally assumed to be
+on an infinite space, but since infinitely large displays haven't been
+invented yet, stick to warping at the edges. This means when a cell goes off
+the top, it comes back in its corresponding position on the bottom. This is
+commonly known as <a href="https://en.wikipedia.org/wiki/Torus">toroidal space</a>.</p>
+<p>The <code>getCell</code> and <code>setCell</code> functions are wrappers to the <code>store</code> and <code>load</code> functions
+to make it easier to interact with memory using 2D coordinates:</p>
+<pre><code class="language-ts hljs language-typescript"><span class="hljs-meta">@inline</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getCell</span>(<span class="hljs-params">x: u32, y: u32</span>): u32 {
+  <span class="hljs-keyword">return</span> load&lt;u32&gt;((x + y * universe_width) &lt;&lt; <span class="hljs-number">2</span>);
+}
+
+<span class="hljs-meta">@inline</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">setCell</span>(<span class="hljs-params">x: u32, y: u32, val: u32</span>): <span class="hljs-built_in">void</span> {
+  store&lt;u32&gt;(((x + y * universe_width) &lt;&lt; <span class="hljs-number">2</span>) + chunk_offset, val);
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">copyToPrimary</span>(<span class="hljs-params"></span>): <span class="hljs-built_in">void</span> {
+  memory.<span class="hljs-title function_">copy</span>(<span class="hljs-number">0</span>, chunk_offset, chunk_offset);
+}
+</code></pre>
+<p>The <code>@inline</code> is an <a href="https://www.assemblyscript.org/peculiarities.html#annotations">annotation</a> that requests that the compiler convert calls to
+the function with the function definition itself.</p>
+<p>Call the update function on every iteration from <code>index.js</code> and render the image
+data from the module memory:</p>
+<pre><code class="language-js hljs language-javascript"><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">FPS</span> = <span class="hljs-number">5</span>;
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">runWasm</span> = <span class="hljs-keyword">async</span> (<span class="hljs-params"></span>) =&gt; {
+  ...
+
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">step</span> = (<span class="hljs-params"></span>) =&gt; {
+    <span class="hljs-built_in">exports</span>.<span class="hljs-title function_">update</span>();
+
+    imageData.<span class="hljs-property">data</span>.<span class="hljs-title function_">set</span>(memoryArray.<span class="hljs-title function_">slice</span>(<span class="hljs-number">0</span>, <span class="hljs-variable constant_">WIDTH</span> * <span class="hljs-variable constant_">HEIGHT</span> * <span class="hljs-number">4</span>));
+    ctx.<span class="hljs-title function_">putImageData</span>(imageData, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+
+    <span class="hljs-built_in">setTimeout</span>(step, <span class="hljs-number">1000</span> / <span class="hljs-variable constant_">FPS</span>);
+  };
+  <span class="hljs-title function_">step</span>();
+</code></pre>
+<p>At this point, if you compile the module and load the page, it shows nothing.
+The code works fine, but since you don't have any living cells initially,
+there are no new cells coming up.</p>
+<p>Create a new function to randomly add cells during initialization:</p>
+<pre><code class="language-ts hljs language-typescript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">fillUniverse</span>(<span class="hljs-params"></span>): <span class="hljs-built_in">void</span> {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> <span class="hljs-attr">x</span>: u32 = <span class="hljs-number">0</span>; x &lt; universe_width; x++) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> <span class="hljs-attr">y</span>: u32 = <span class="hljs-number">0</span>; y &lt; universe_height; y++) {
+      <span class="hljs-title function_">setCell</span>(x, y, <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() &gt; <span class="hljs-number">0.5</span> ? alive_color : dead_color);
+    }
+  }
+
+  <span class="hljs-title function_">copyToPrimary</span>();
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">init</span>(<span class="hljs-params">width: u32, height: u32</span>): <span class="hljs-built_in">void</span> {
+  ...
+
+  <span class="hljs-title function_">fillUniverse</span>();
+</code></pre>
+<p>Since <code>Math.random</code> is used to determine the initial state of a cell, the
+WebAssembly module needs a seed function to derive a random number from.</p>
+<p>AssemblyScript provides a convenient <a href="https://www.assemblyscript.org/loader.html">module loader</a> that does this and a lot
+more, like wrapping the browser APIs for module loading and providing
+functions for more fine-grained memory control. You will not be using it here
+since it abstracts away many details that would otherwise help in learning the
+inner workings of WebAssembly, so pass in a seed function instead:</p>
+<pre><code class="language-js hljs language-javascript"><span class="hljs-keyword">const</span> importObject = {
+  <span class="hljs-attr">env</span>: {
+    <span class="hljs-attr">seed</span>: <span class="hljs-title class_">Date</span>.<span class="hljs-property">now</span>,
+    <span class="hljs-attr">abort</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">'aborting!'</span>)
+  }
+};
+<span class="hljs-keyword">const</span> <span class="hljs-variable language_">module</span> = <span class="hljs-keyword">await</span> <span class="hljs-title class_">WebAssembly</span>.<span class="hljs-title function_">instantiateStreaming</span>(<span class="hljs-title function_">fetch</span>(<span class="hljs-string">'./build/optimized.wasm'</span>), importObject);
+</code></pre>
+<p><code>instantiateStreaming</code> can be called with an optional second parameter, an
+object that exposes JavaScript functions to WebAssembly modules. Here, use
+<code>Date.now</code> as the seed to generate random numbers.</p>
+<p>It should now be possible to run the <code>fillUniverse</code> function and finally have
+life on your grid!</p>
+<p>You can also play around with different <code>WIDTH</code>, <code>HEIGHT</code>, and <code>FPS</code> values and use
+different cell colors.</p>
+<p><img src="/img/wasm-game-of-life/life.png" alt="ScreenShot of the game running"></p>
+<h2>Try the game</h2>
+<p>If you use large sizes, make sure to grow the memory accordingly.</p>
+<p>Here's the complete code: <a href="https://github.com/rottencandy/game-of-life-wasm">https://github.com/rottencandy/game-of-life-wasm</a></p>
+
+</main>
+
+<hr>
+
+        </div>
+    
+
+</body></html>

@@ -10,15 +10,6 @@
         <generator>Lume</generator>
         
         <item>
-            <title>Blog</title>
-            <link>https://rottencandy.github.io/blog/</link>
-            <guid>https://rottencandy.github.io/blog/</guid>
-            <description></description>
-            <language>en</language>
-            <pubDate>Sun Oct 08 2023 19:46:44 GMT+0000 (Coordinated Universal Time)</pubDate>
-        </item>
-        
-        <item>
             <title>Bit Path - Lisp and game development</title>
             <link>https://rottencandy.github.io/blog/bitpath/</link>
             <guid>https://rottencandy.github.io/blog/bitpath/</guid>

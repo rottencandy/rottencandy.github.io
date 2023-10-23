@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+        <title>How to install nix on Fedora Workstation | saud</title>
+        <meta charset="utf-8">
+
+
+        <meta name="monetization" content="$ilp.uphold.com/wJiQfZf9NYg8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="author" content="saud">
+
+
+        <meta property="og:url" content="https://rottencandy.github.io/blog/fedora-nix/">
+
+        <meta property="og:type" content="website">
+
+        <meta property="og:title" content="How to install nix on Fedora Workstation">
+
+        <meta property="og:locale" content="en_US">
+
+
+        <meta name="twitter:title" content="How to install nix on Fedora Workstation">
+
+        <meta name="twitter:creator" content="@rotttencandy">
+
+        <meta name="twitter:card" content="summary">
+
+
+        
+        <meta property="og:description" content="When you want to have your cake and eat it too">
+
+        <meta name="description" content="When you want to have your cake and eat it too">
+
+        
+
+        
+
+        
+        <link rel="stylesheet" href="/light.css">
+        <link rel="stylesheet" href="/dark.css" media="screen and (prefers-color-scheme: dark)">
+
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+    </head>
+
+    <body>
+        <div class="content">
+            <header>
+    <a href="/">Home</a> | <a href="/blog">Posts</a>
+
+    <h1>How to install nix on Fedora Workstation</h1>
+    <strong><time datetime="2023-09-20">2023-09-20</time></strong>
+</header>
+
+<hr>
+
+<main>
+    <p>I've been very satisfied with switching to <a href="https://nixos.org/">NixOS</a> on my home systems recently,
+so I decided to install nix(the package manager) on my work machine too, which runs Fedora.</p>
+<p>Nix does everything in the <code>/nix</code> directory,
+and Fedora comes with SELinux enabled by default.
+SELinux does not like it when processes do too many things outside of the home directory.
+This makes nix a bit tricky to get installed and running properly on Fedora.</p>
+<p>The multi-user installer script available on <a href="https://nixos.org/download">nixos.org/download</a> will not work
+on a Fedora installation (at least during the time of writing this) for this reason.
+There <a href="https://github.com/NixOS/nix/issues/2374">is awareness</a> on this issue, and it's being worked on. But until a proper fix is available, we need to work around it by manually setting SELinux rules for everything inside <code>/nix</code>.</p>
+<p>Thankfully, <a href="https://github.com/dnkmmr69420">dnkmmr69420</a> has made a <a href="https://github.com/dnkmmr69420/nix-installer-scripts">really helpful guide</a> to do exactly that, and even made a script that can do everything in a single command.
+I usually don't recommend running random scripts from the internet without verifying them,
+but you can alternatively follow step-by-step instructions <a href="https://github.com/dnkmmr69420/nix-installer-scripts/blob/main/docs/selinux-nix-manual-install-guide.md">here</a> to do the same.
+It essentially walks you through setting SELinux file conexts,
+temporarily disable it to install nix, and then finish up by enabling it back.</p>
+<p>After you're is done, you shuold have nix running on your system which you can confirm by running <code>nix --version</code>.</p>
+<p>But we're not finished.</p>
+<p>If you try to install and run any packages that use OpenGL/Vulkan libraries (which is pretty much all GUI applications),
+you'll see a bunch of library errors and the application failing to launch.
+This happens because nix uses paths different from the base OS to store libraries.
+Normally nix ensures that packages have all available libs, but for GUI applications this is not possible since they can only use the OS libraries,
+this ultimately fails as they don't find the required libs in the usual nix paths.</p>
+<p>This is also <a href="https://github.com/NixOS/nixpkgs/issues/9415">a well-known issue</a> and is being worked on.
+The best solution at the moment is <a href="https://github.com/nix-community/nixGL">nixGL</a>, it makes sure packages have access to the correct libs needed to run GUI applications.
+Follow the <a href="https://github.com/nix-community/nixGL#installation">instructions</a> to install nixGL by adding the nix channel.</p>
+<p>It can be used by wrapping over the command of the package you want to run.
+For example, to run <code>obs</code> I would have to use <code>nixGLIntel obs</code>, use either <code>nixGLIntel</code> or <code>nixGLNvidia</code> depending on your hardware.
+And Vulkan packages need to be run with <code>nixVulkanIntel</code> or <code>nixVulkanNvidia</code>.</p>
+<p>That should be it, everything that's needed to have a fully functioning nix installation on Fedora.</p>
+
+</main>
+
+<hr>
+
+        </div>
+    
+
+</body></html>

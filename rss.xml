@@ -10,6 +10,15 @@
         <generator>Lume</generator>
         
         <item>
+            <title>How to install nix on Fedora Workstation</title>
+            <link>https://rottencandy.github.io/blog/fedora-nix/</link>
+            <guid>https://rottencandy.github.io/blog/fedora-nix/</guid>
+            <description>When you want to have your cake and eat it too</description>
+            <language>en</language>
+            <pubDate>Wed Sep 20 2023 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+        </item>
+        
+        <item>
             <title>Bit Path - Lisp and game development</title>
             <link>https://rottencandy.github.io/blog/bitpath/</link>
             <guid>https://rottencandy.github.io/blog/bitpath/</guid>

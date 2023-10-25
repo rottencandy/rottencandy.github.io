@@ -48,17 +48,23 @@
 
     <body>
         <div class="content">
-            <header>
+            <nav>
     <a href="/">Home</a> | <a href="/blog">Posts</a>
-
-    <h1>Quick &amp; dirty project-wide fuzzy search in vim</h1>
-    <strong><time datetime="2021-06-10">2021-06-10</time></strong>
-</header>
-
-<hr>
+</nav>
 
 <main>
-    <p>The most common method of searching files for text using vim is with the <code>:grep</code> command.
+    <article>
+        <header>
+            <h1>Quick &amp; dirty project-wide fuzzy search in vim</h1>
+            <strong>
+                <time datetime="2021-06-10">2021-06-10</time>
+            </strong>
+        </header>
+
+        <hr>
+
+        <section>
+            <p>The most common method of searching files for text using vim is with the <code>:grep</code> command.
 It conveniently fills up the quickfix list with all files containing matches, allowing easy navigation.
 Moreover, it can be configured with the <code>grepprg</code> option to use any grep program to do the searching.</p>
 <p>But lately, I've developed this habit of sticking <a href="https://github.com/junegunn/fzf">fzf</a> into any scripts or aliases I make.
@@ -155,9 +161,20 @@ endfun
   \ }))<span class="hljs-symbol">&lt;CR&gt;</span>
 </code></pre>
 
+        </section>
+    </article>
+
+    <hr>
+
+    <footer>
+        <p>
+            <em>
+                If you have any comments or suggestions, I'd love to know. Please feel free to email me.
+            </em>
+        </p>
+    </footer>
 </main>
 
-<hr>
 
         </div>
     

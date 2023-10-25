@@ -48,17 +48,23 @@
 
     <body>
         <div class="content">
-            <header>
+            <nav>
     <a href="/">Home</a> | <a href="/blog">Posts</a>
-
-    <h1>How to install nix on Fedora Workstation</h1>
-    <strong><time datetime="2023-10-24">2023-10-24</time></strong>
-</header>
-
-<hr>
+</nav>
 
 <main>
-    <p>I've been very satisfied with switching to <a href="https://nixos.org/">NixOS</a> on my home systems recently,
+    <article>
+        <header>
+            <h1>How to install nix on Fedora Workstation</h1>
+            <strong>
+                <time datetime="2023-10-24">2023-10-24</time>
+            </strong>
+        </header>
+
+        <hr>
+
+        <section>
+            <p>I've been very satisfied with switching to <a href="https://nixos.org/">NixOS</a> on my home systems recently,
 so I decided to install nix(the package manager) on my work machine too, which runs Fedora.</p>
 <p>Nix does everything in the <code>/nix</code> directory,
 and Fedora comes with SELinux enabled by default.
@@ -87,9 +93,20 @@ For example, to run <code>obs</code> I would have to use <code>nixGLIntel obs</c
 And Vulkan packages need to be run with <code>nixVulkanIntel</code> or <code>nixVulkanNvidia</code>.</p>
 <p>That should be it, everything that's needed to have a fully functioning nix installation on Fedora.</p>
 
+        </section>
+    </article>
+
+    <hr>
+
+    <footer>
+        <p>
+            <em>
+                If you have any comments or suggestions, I'd love to know. Please feel free to email me.
+            </em>
+        </p>
+    </footer>
 </main>
 
-<hr>
 
         </div>
     

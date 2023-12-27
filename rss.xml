@@ -28,7 +28,7 @@
         </item>
         
         <item>
-            <title>Quick & dirty project-wide fuzzy search in vim</title>
+            <title>Quick &amp; dirty project-wide fuzzy search in vim</title>
             <link>https://rottencandy.github.io/blog/vim-fuzzy-search/</link>
             <guid>https://rottencandy.github.io/blog/vim-fuzzy-search/</guid>
             <description>Fuzzy searching in vim, the worst possible way.</description>
@@ -37,7 +37,7 @@
         </item>
         
         <item>
-            <title>Make Conway's Game of Life in WebAssembly</title>
+            <title>Make Conway&#39;s Game of Life in WebAssembly</title>
             <link>https://rottencandy.github.io/blog/wasm-game-of-life/</link>
             <guid>https://rottencandy.github.io/blog/wasm-game-of-life/</guid>
             <description>WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.</description>
@@ -76,7 +76,7 @@
             <title>Web Interface for Retroshare - Update 1</title>
             <link>https://rottencandy.github.io/blog/retroshare-update-2/</link>
             <guid>https://rottencandy.github.io/blog/retroshare-update-2/</guid>
-            <description>Update on the development process of Retroshare's new web interface.</description>
+            <description>Update on the development process of Retroshare&#39;s new web interface.</description>
             <language>en</language>
             <pubDate>Sun Jun 23 2019 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
         </item>

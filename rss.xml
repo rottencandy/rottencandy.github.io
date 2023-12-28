@@ -10,84 +10,84 @@
         <generator>Lume</generator>
         
         <item>
-            <title>How to install nix on Fedora Workstation</title>
-            <link>https://rottencandy.github.io/blog/fedora-nix/</link>
             <guid>https://rottencandy.github.io/blog/fedora-nix/</guid>
-            <description>When you want to have your cake and eat it too</description>
-            <language>en</language>
+            <link>https://rottencandy.github.io/blog/fedora-nix/</link>
+            <title>How to install nix on Fedora Workstation</title>
             <pubDate>Tue Oct 24 2023 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>When you want to have your cake and eat it too</description>
         </item>
         
         <item>
-            <title>Bit Path - Lisp and game development</title>
-            <link>https://rottencandy.github.io/blog/bitpath/</link>
             <guid>https://rottencandy.github.io/blog/bitpath/</guid>
-            <description>Making a game in a lisp</description>
-            <language>en</language>
+            <link>https://rottencandy.github.io/blog/bitpath/</link>
+            <title>Bit Path - Lisp and game development</title>
             <pubDate>Fri Jun 10 2022 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>Making a game in a lisp</description>
         </item>
         
         <item>
-            <title>Quick &amp; dirty project-wide fuzzy search in vim</title>
-            <link>https://rottencandy.github.io/blog/vim-fuzzy-search/</link>
             <guid>https://rottencandy.github.io/blog/vim-fuzzy-search/</guid>
-            <description>Fuzzy searching in vim, the worst possible way.</description>
-            <language>en</language>
+            <link>https://rottencandy.github.io/blog/vim-fuzzy-search/</link>
+            <title>Quick &amp; dirty project-wide fuzzy search in vim</title>
             <pubDate>Thu Jun 10 2021 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>Fuzzy searching in vim, the worst possible way.</description>
         </item>
         
         <item>
-            <title>Make Conway&#39;s Game of Life in WebAssembly</title>
-            <link>https://rottencandy.github.io/blog/wasm-game-of-life/</link>
             <guid>https://rottencandy.github.io/blog/wasm-game-of-life/</guid>
-            <description>WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.</description>
-            <language>en</language>
+            <link>https://rottencandy.github.io/blog/wasm-game-of-life/</link>
+            <title>Make Conway&#39;s Game of Life in WebAssembly</title>
             <pubDate>Tue Apr 13 2021 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.</description>
         </item>
         
         <item>
-            <title>Making of FOURFOLD</title>
-            <link>https://rottencandy.github.io/blog/fourfold/</link>
             <guid>https://rottencandy.github.io/blog/fourfold/</guid>
-            <description>Postmortem of a game I made for the JS13k game competition.</description>
-            <language>en</language>
+            <link>https://rottencandy.github.io/blog/fourfold/</link>
+            <title>Making of FOURFOLD</title>
             <pubDate>Sat Oct 10 2020 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>Postmortem of a game I made for the JS13k game competition.</description>
         </item>
         
         <item>
-            <title>Web Interface for Retroshare - Final Update</title>
-            <link>https://rottencandy.github.io/blog/retroshare-update-4/</link>
             <guid>https://rottencandy.github.io/blog/retroshare-update-4/</guid>
-            <description>The high-level architecture of the application, code patterns, and roadmap for further development.</description>
-            <language>en</language>
+            <link>https://rottencandy.github.io/blog/retroshare-update-4/</link>
+            <title>Web Interface for Retroshare - Final Update</title>
             <pubDate>Sun Aug 25 2019 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>The high-level architecture of the application, code patterns, and roadmap for further development.</description>
         </item>
         
         <item>
-            <title>Web Interface for Retroshare - Update 2</title>
-            <link>https://rottencandy.github.io/blog/retroshare-update-3/</link>
             <guid>https://rottencandy.github.io/blog/retroshare-update-3/</guid>
-            <description>Second progress update. More details about the revamped UI.</description>
-            <language>en</language>
+            <link>https://rottencandy.github.io/blog/retroshare-update-3/</link>
+            <title>Web Interface for Retroshare - Update 2</title>
             <pubDate>Wed Jul 24 2019 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>Second progress update. More details about the revamped UI.</description>
         </item>
         
         <item>
-            <title>Web Interface for Retroshare - Update 1</title>
-            <link>https://rottencandy.github.io/blog/retroshare-update-2/</link>
             <guid>https://rottencandy.github.io/blog/retroshare-update-2/</guid>
-            <description>Update on the development process of Retroshare&#39;s new web interface.</description>
-            <language>en</language>
+            <link>https://rottencandy.github.io/blog/retroshare-update-2/</link>
+            <title>Web Interface for Retroshare - Update 1</title>
             <pubDate>Sun Jun 23 2019 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>Update on the development process of Retroshare&#39;s new web interface.</description>
         </item>
         
         <item>
-            <title>A new Web Interface for Retroshare</title>
-            <link>https://rottencandy.github.io/blog/a-new-web-interface-for-retroshare/</link>
             <guid>https://rottencandy.github.io/blog/a-new-web-interface-for-retroshare/</guid>
-            <description>A post about the reason behind creating a new web interface for Retroshare.</description>
-            <language>en</language>
+            <link>https://rottencandy.github.io/blog/a-new-web-interface-for-retroshare/</link>
+            <title>A new Web Interface for Retroshare</title>
             <pubDate>Thu May 23 2019 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>A post about the reason behind creating a new web interface for Retroshare.</description>
         </item>
         
     </channel>

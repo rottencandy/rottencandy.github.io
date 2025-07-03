@@ -85,7 +85,7 @@ And they should even automatically switch based on charging states.</p>
 <p>It's so stupid, the laptop's power button is placed on the side, <em>exactly</em> where you would normally hold the laptop.
 And is light enough to be accidentally pressed very easily.</p>
 <p>I highly recommend disabling it while the device is on. All you need to do is add the following to <code>/etc/systemd/logind.conf</code>:</p>
-<pre><code class="language-conf">HandlePowerKey=ignore
+<pre><code>HandlePowerKey=ignore
 </code></pre>
 <p>For nixOS, put it in <code>services.logind.extraConfig</code>.</p>
 <p>And that should disable it.</p>

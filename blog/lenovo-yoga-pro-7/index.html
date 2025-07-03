@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+        <title>Linux on the Lenovo Yoga Pro 7 | saud</title>
+        <meta charset="utf-8">
+
+
+        <meta name="monetization" content="$ilp.uphold.com/wJiQfZf9NYg8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="author" content="saud">
+
+
+        <meta property="og:url" content="https://rottencandy.github.io/blog/lenovo-yoga-pro-7/">
+
+        <meta property="og:type" content="website">
+
+        <meta property="og:title" content="Linux on the Lenovo Yoga Pro 7">
+
+        <meta property="og:locale" content="en_US">
+
+
+        <meta name="twitter:title" content="Linux on the Lenovo Yoga Pro 7">
+
+        <meta name="twitter:creator" content="@rotttencandy">
+
+        <meta name="twitter:card" content="summary">
+
+
+        
+        <meta property="og:description" content="Things to do after installing linux on the Lenovo Yoga Pro 7 AMD Gen 9">
+
+        <meta name="description" content="Things to do after installing linux on the Lenovo Yoga Pro 7 AMD Gen 9">
+
+        
+
+        
+        <meta property="og:image" content="https://rottencandy.github.io/img/lenovo-yoga-pro-7/laptop.jpg">
+
+        
+
+        
+        <link rel="stylesheet" href="/light.css">
+        <link rel="stylesheet" href="/dark.css" media="screen and (prefers-color-scheme: dark)">
+
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+    </head>
+
+    <body>
+        <div class="content">
+            <nav>
+    <a href="/">Home</a> | <a href="/blog">Posts</a>
+</nav>
+
+<main>
+    <article>
+        <header>
+            <h1>Linux on the Lenovo Yoga Pro 7</h1>
+            <strong>
+                <time datetime="2025-07-03">3rd Jul, 2025</time>
+            </strong>
+        </header>
+
+        <hr>
+
+        <section>
+            <p>I got the Lenovo Yoga Pro 7 (gen 9) AMD version for work. It's incredibly fast due to AMD's new Strix Point architecture and I love using it.
+Obviously, installing linux was a breeze compared to my previous device that had nvidia hardware.</p>
+<p>But I still had to make a few minor tweaks to fix a bunch of "quirks" in order to set it up to my liking,
+so here they are in case it helps anyone.</p>
+<h2>Power profiles</h2>
+<p>There's a good change that any popular linux distro you install comes with <code>power-profiles-daemon</code> installed that allows setting one of the three predefined CPU power profiles (power, balanced, performance).
+And they should even automatically switch based on charging states.</p>
+<p>But it's too barebones for my tastes, so I installed <a href="https://linrunner.de/tlp/index.html">TLP</a> instead, which is a lot more powerful and has more options for fine-grained control. Here's an example config to match power-profiles-daemon's behavior: https://linrunner.de/tlp/faq/ppd.html#how-can-i-use-tlp-to-achieve-the-same-effect-as-power-profiles-daemon</p>
+<p>Note that TLP and power-profiles-daemon conflict with each other so to use one you have to uninstall the other.</p>
+<h2>Charge threshold</h2>
+<p>Setting up a charging limit is one of the first things I do all my devices, Thankfully TLP's charge threshold works out of the box almost perfectly.</p>
+<p>The only caveat, it can go only upto 80% capacity. And from what I could gather, it's baked into the firmware so I couldn't go lower. It's something I can live with, but still worth noting.</p>
+<h2>Power button</h2>
+<p>The only design failure of this device for me.</p>
+<p>It's so stupid, the laptop's power button is placed on the side, <em>exactly</em> where you would normally hold the laptop.
+And is light enough to be accidentally pressed very easily.</p>
+<p>I highly recommend disabling it while the device is on. All you need to do is add the following to <code>/etc/systemd/logind.conf</code>:</p>
+<pre><code class="language-conf">HandlePowerKey=ignore
+</code></pre>
+<p>For nixOS, put it in <code>services.logind.extraConfig</code>.</p>
+<p>And that should disable it.</p>
+<p>Here's my full nixOS config for the device: https://github.com/rottencandy/nixfiles/blob/main/hosts/kitsune/configuration.nix</p>
+
+        </section>
+    </article>
+
+    <hr>
+
+    <footer>
+        <p>
+            <em>
+                Have comments or suggestions? Email me or throw them at me on mastodon.
+            </em>
+        </p>
+    </footer>
+</main>
+
+        </div>
+    
+
+</body></html>

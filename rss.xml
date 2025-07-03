@@ -10,6 +10,15 @@
         <generator>Lume</generator>
         
         <item>
+            <guid>https://rottencandy.github.io/blog/lenovo-yoga-pro-7/</guid>
+            <link>https://rottencandy.github.io/blog/lenovo-yoga-pro-7/</link>
+            <title>Linux on the Lenovo Yoga Pro 7</title>
+            <pubDate>Thu Jul 03 2025 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
+            <language>en</language>
+            <description>Things to do after installing linux on the Lenovo Yoga Pro 7 AMD Gen 9</description>
+        </item>
+        
+        <item>
             <guid>https://rottencandy.github.io/blog/fedora-nix/</guid>
             <link>https://rottencandy.github.io/blog/fedora-nix/</link>
             <title>How to install nix on Fedora Workstation</title>

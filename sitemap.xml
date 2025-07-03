@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://rottencandy.github.io/</loc>
-    <lastmod>2024-07-05T18:44:43.215Z</lastmod>
+    <lastmod>2025-07-03T15:14:38.683Z</lastmod>
   </url>
   <url>
     <loc>https://rottencandy.github.io/blog/</loc>
-    <lastmod>2024-07-05T18:44:43.215Z</lastmod>
+    <lastmod>2025-07-03T15:14:38.683Z</lastmod>
   </url>
   <url>
     <loc>https://rottencandy.github.io/blog/a-new-web-interface-for-retroshare/</loc>
@@ -23,6 +23,10 @@
   <url>
     <loc>https://rottencandy.github.io/blog/fourfold/</loc>
     <lastmod>2020-10-10T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://rottencandy.github.io/blog/lenovo-yoga-pro-7/</loc>
+    <lastmod>2025-07-03T00:00:00.000Z</lastmod>
   </url>
   <url>
     <loc>https://rottencandy.github.io/blog/retroshare-update-2/</loc>
@@ -46,6 +50,6 @@
   </url>
   <url>
     <loc>https://rottencandy.github.io/projects/</loc>
-    <lastmod>2024-07-05T18:44:43.215Z</lastmod>
+    <lastmod>2025-07-03T15:14:38.683Z</lastmod>
   </url>
 </urlset>

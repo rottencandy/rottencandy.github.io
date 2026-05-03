@@ -1,4 +1,2 @@
-User-agent: *
-Allow: /
 
 Sitemap: https://rottencandy.github.io/sitemap.xml

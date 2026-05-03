@@ -8,7 +8,6 @@
         <language>en</language>
         <atom:link href="https://rottencandy.github.io/rss.xml" rel="self" type="application/rss+xml"/>
         <generator>Lume</generator>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/lenovo-yoga-pro-7/</guid>
             <link>https://rottencandy.github.io/blog/lenovo-yoga-pro-7/</link>
@@ -17,7 +16,6 @@
             <language>en</language>
             <description>Things to do after installing linux on the Lenovo Yoga Pro 7 AMD Gen 9</description>
         </item>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/fedora-nix/</guid>
             <link>https://rottencandy.github.io/blog/fedora-nix/</link>
@@ -26,7 +24,6 @@
             <language>en</language>
             <description>When you want to have your cake and eat it too</description>
         </item>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/bitpath/</guid>
             <link>https://rottencandy.github.io/blog/bitpath/</link>
@@ -35,7 +32,6 @@
             <language>en</language>
             <description>Making a game in a lisp</description>
         </item>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/vim-fuzzy-search/</guid>
             <link>https://rottencandy.github.io/blog/vim-fuzzy-search/</link>
@@ -44,16 +40,14 @@
             <language>en</language>
             <description>Fuzzy searching in vim, the worst possible way.</description>
         </item>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/wasm-game-of-life/</guid>
             <link>https://rottencandy.github.io/blog/wasm-game-of-life/</link>
-            <title>Make Conway&#39;s Game of Life in WebAssembly</title>
+            <title>Make Conway&apos;s Game of Life in WebAssembly</title>
             <pubDate>Tue Apr 13 2021 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
             <language>en</language>
             <description>WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.</description>
         </item>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/fourfold/</guid>
             <link>https://rottencandy.github.io/blog/fourfold/</link>
@@ -62,7 +56,6 @@
             <language>en</language>
             <description>Postmortem of a game I made for the JS13k game competition.</description>
         </item>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/retroshare-update-4/</guid>
             <link>https://rottencandy.github.io/blog/retroshare-update-4/</link>
@@ -71,7 +64,6 @@
             <language>en</language>
             <description>The high-level architecture of the application, code patterns, and roadmap for further development.</description>
         </item>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/retroshare-update-3/</guid>
             <link>https://rottencandy.github.io/blog/retroshare-update-3/</link>
@@ -80,16 +72,14 @@
             <language>en</language>
             <description>Second progress update. More details about the revamped UI.</description>
         </item>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/retroshare-update-2/</guid>
             <link>https://rottencandy.github.io/blog/retroshare-update-2/</link>
             <title>Web Interface for Retroshare - Update 1</title>
             <pubDate>Sun Jun 23 2019 00:00:00 GMT+0000 (Coordinated Universal Time)</pubDate>
             <language>en</language>
-            <description>Update on the development process of Retroshare&#39;s new web interface.</description>
+            <description>Update on the development process of Retroshare&apos;s new web interface.</description>
         </item>
-        
         <item>
             <guid>https://rottencandy.github.io/blog/a-new-web-interface-for-retroshare/</guid>
             <link>https://rottencandy.github.io/blog/a-new-web-interface-for-retroshare/</link>
@@ -98,6 +88,5 @@
             <language>en</language>
             <description>A post about the reason behind creating a new web interface for Retroshare.</description>
         </item>
-        
     </channel>
 </rss>

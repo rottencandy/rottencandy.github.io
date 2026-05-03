@@ -4,14 +4,12 @@
         <meta charset="utf-8">
 
 
-        <meta name="monetization" content="$ilp.uphold.com/wJiQfZf9NYg8">
-
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <meta name="author" content="saud">
 
 
-        <meta property="og:url" content="https://rottencandy.github.io/blog/wasm-game-of-life/">
+        <meta property="og:url" content="/blog/wasm-game-of-life/">
 
         <meta property="og:type" content="website">
 
@@ -27,19 +25,14 @@
         <meta name="twitter:card" content="summary">
 
 
-        
-        <meta property="og:description" content="WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.">
+            <meta property="og:description" content="WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.">
 
-        <meta name="description" content="WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.">
+            <meta name="description" content="WebAssembly is a good option for computationally expensive tasks due to its predefined execution environment and memory granularity.">
 
-        
 
-        
-        <meta property="og:image" content="https://rottencandy.github.io/img/wasm-game-of-life/life.png">
+            <meta property="og:image" content="img/wasm-game-of-life/life.png">
 
-        
 
-        
         <link rel="stylesheet" href="/light.css">
         <link rel="stylesheet" href="/dark.css" media="screen and (prefers-color-scheme: dark)">
 
@@ -270,7 +263,7 @@ your first pixel on the top-left of the canvas.</p>
 <span class="hljs-keyword">let</span> <span class="hljs-attr">dead_color</span>: u32;
 <span class="hljs-keyword">let</span> <span class="hljs-attr">chunk_offset</span>: u32;
 
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">init</span>(<span class="hljs-params">width: u32, height: u32</span>): <span class="hljs-built_in">void</span> {
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">init</span>(<span class="hljs-params"><span class="hljs-attr">width</span>: u32, <span class="hljs-attr">height</span>: u32</span>): <span class="hljs-built_in">void</span> {
   universe_width = width;
   universe_height = height;
   chunk_offset = width * height * <span class="hljs-number">4</span>;
@@ -311,7 +304,7 @@ other for calculating and temporarily storing the next state. After the
 calculation is done, the second array is copied to the first for rendering.</p>
 <p>The rules are fairly straightforward, but the <code>countNeighbours()</code> function looks
 interesting. Take a closer look:</p>
-<pre><code class="language-ts hljs language-typescript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">countNeighbours</span>(<span class="hljs-params">x: u32, y: u32</span>): u32 {
+<pre><code class="language-ts hljs language-typescript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">countNeighbours</span>(<span class="hljs-params"><span class="hljs-attr">x</span>: u32, <span class="hljs-attr">y</span>: u32</span>): u32 {
   <span class="hljs-keyword">let</span> neighbours = <span class="hljs-number">0</span>;
 
   <span class="hljs-keyword">const</span> max_x = universe_width - <span class="hljs-number">1</span>;
@@ -354,12 +347,12 @@ commonly known as <a href="https://en.wikipedia.org/wiki/Torus">toroidal space</
 <p>The <code>getCell</code> and <code>setCell</code> functions are wrappers to the <code>store</code> and <code>load</code> functions
 to make it easier to interact with memory using 2D coordinates:</p>
 <pre><code class="language-ts hljs language-typescript"><span class="hljs-meta">@inline</span>
-<span class="hljs-keyword">function</span> <span class="hljs-title function_">getCell</span>(<span class="hljs-params">x: u32, y: u32</span>): u32 {
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getCell</span>(<span class="hljs-params"><span class="hljs-attr">x</span>: u32, <span class="hljs-attr">y</span>: u32</span>): u32 {
   <span class="hljs-keyword">return</span> load&lt;u32&gt;((x + y * universe_width) &lt;&lt; <span class="hljs-number">2</span>);
 }
 
 <span class="hljs-meta">@inline</span>
-<span class="hljs-keyword">function</span> <span class="hljs-title function_">setCell</span>(<span class="hljs-params">x: u32, y: u32, val: u32</span>): <span class="hljs-built_in">void</span> {
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">setCell</span>(<span class="hljs-params"><span class="hljs-attr">x</span>: u32, <span class="hljs-attr">y</span>: u32, <span class="hljs-attr">val</span>: u32</span>): <span class="hljs-built_in">void</span> {
   store&lt;u32&gt;(((x + y * universe_width) &lt;&lt; <span class="hljs-number">2</span>) + chunk_offset, val);
 }
 
@@ -400,7 +393,7 @@ there are no new cells coming up.</p>
   <span class="hljs-title function_">copyToPrimary</span>();
 }
 
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">init</span>(<span class="hljs-params">width: u32, height: u32</span>): <span class="hljs-built_in">void</span> {
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">init</span>(<span class="hljs-params"><span class="hljs-attr">width</span>: u32, <span class="hljs-attr">height</span>: u32</span>): <span class="hljs-built_in">void</span> {
   ...
 
   <span class="hljs-title function_">fillUniverse</span>();
